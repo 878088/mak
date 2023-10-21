@@ -1,10 +1,11 @@
 API="https://api.github.com/repos/878088/BBRv3/releases"
-urls=$(curl -s "$API" | jq -r '.[].assets[].browser_download_url')
+response=$(curl -s "$API")
+download_url=$(echo "$response" | jq -r '.[].assets[] | select(.browser_download_url | contains("linux-headers") or contains("linux-image") or contains("linux-libc-dev")) | .browser_download_url')
 arch=$(dpkg --print-architecture)
 if [ "$arch" == "amd64" ]; then
-    download_url=$(echo "$urls" | grep "amd64")
+    download_url=$(echo "$download_url" | grep "amd64")
 elif [ "$arch" == "arm64" ]; then
-    download_url=$(echo "$urls" | grep "arm64")
+    download_url=$(echo "$download_url" | grep "arm64")
 else
     echo "Unsupported architecture: $arch"
     exit 1
