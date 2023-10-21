@@ -12,5 +12,22 @@ else
 fi
 mkdir -p BBRv3
 while read -r url; do
+    filename=$(basename "$url")
+    echo "Downloading: $filename"
     wget -q --show-progress "$url" -P BBRv3
 done <<< "$download_urls"
+if [ -d "BBRv3" ]; then
+    cd BBRv3 && dpkg -i *.deb
+    if [ $? -eq 0 ]; then
+        echo "成功安装BBRv3"
+        echo "请重新启动系统"
+        cd .. && rm -rf BBRv3
+    else
+        echo "安装BBRv3失败"
+        exit 1
+    fi
+    cd .. && rm -rf BBRv3
+else
+    echo "没有BBRv3目录"
+    exit 1
+fi
