@@ -20,7 +20,7 @@ if [ -d "BBRv3" ]; then
     cd BBRv3 && dpkg -i *.deb
     if [ $? -eq 0 ]; then
         echo "成功安装BBRv3"
-        echo "一请重启系统一"
+        echo "☞请重启系统☜"
         cd .. && rm -rf BBRv3
     else
         echo "安装BBRv3失败"
