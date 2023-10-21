@@ -10,9 +10,7 @@ else
     echo "Unsupported architecture: $arch"
     exit 1
 fi
-echo "Downloading from the following URLs:"
-echo "$download_urls"
+mkdir -p BBRv3
 while read -r url; do
-    echo "Downloading: $url"
-    wget "$url"
+    wget -q "$url" -P BBRv3
 done <<< "$download_urls"
