@@ -10,4 +10,4 @@ else
     exit 1
 fi
 echo "Downloading from: $download_url"
-curl -O "$download_url"
+wget "$download_url"
