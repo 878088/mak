@@ -12,5 +12,5 @@ else
 fi
 mkdir -p BBRv3
 while read -r url; do
-    wget -q "$url" -P BBRv3
+    wget -q --show-progress "$url" -P BBRv3
 done <<< "$download_urls"
