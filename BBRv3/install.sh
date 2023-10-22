@@ -33,16 +33,16 @@ done <<< "$download_urls"
 if [ -d "BBRv3" ]; then
     cd BBRv3 && dpkg -i *.deb
     if [ $? -eq 0 ]; then
-        echo "成功安装B B R v 3"
-        echo "☞请重启系统☜"
+        echo "成功安装B·B·R·v·3"
+        echo "·请重启系统·"
         cd .. && rm -rf BBRv3
     else
-        echo "安装B B R v 3失败"
+        echo "安装B·B·R·v·3失败"
         exit 1
     fi
     cd .. && rm -rf BBRv3
 else
-    echo "没有B B R v 3目录"
+    echo "没有B·B·R·v·3目录"
     exit 1
 fi
 }
@@ -50,16 +50,16 @@ fi
 menu(){
     clear
     echo "#############################################################"
-    echo -e "#               ${RED}B B R v 3 一键安装脚本${PLAIN}           #"
+    echo -e "#               ${RED}B·B·R·v·3 一键安装脚本${PLAIN}           #"
     echo "#############################################################"
     echo ""
-    echo -e " ${GREEN}1.${PLAIN} 安装 B B R v 3"
+    echo -e " ${GREEN}1.${PLAIN} 安装 B·B·R·v·3"
     echo -e " ${GREEN}0.${PLAIN} 退出"
     echo ""
     read -rp " 请输入选项 [0-6] ：" answer
     case $answer in
         1) install_BBRv3 ;;
-        *) red "请输入正确的选项 [0-6]！" && exit 1 ;;
+        *) red "退出 [0-6]！" && exit 1 ;;
     esac
 }
 
