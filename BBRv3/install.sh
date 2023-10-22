@@ -40,7 +40,7 @@ echo "一键安装~BBRv3~脚本"
 echo "1. ~安装~BBRv3~"
 echo "0. ~退出~"
 
-read -p "Enter your choice: " choice
+read -p "选择安装: " choice
 
 case $choice in
     1)
