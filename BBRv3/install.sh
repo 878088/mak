@@ -1,5 +1,7 @@
 #!/bin/bash
-
+if ! command -v jq &> /dev/null; then
+    apt-get install -y jq
+fi
 install_BBRv3() {
     API="https://api.github.com/repos/878088/BBRv3/releases"
     response=$(curl -s "$API")
