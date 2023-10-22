@@ -22,24 +22,23 @@ install_BBRv3() {
     if [ -d "BBRv3" ]; then
         cd BBRv3 && dpkg -i *.deb
         if [ $? -eq 0 ]; then
-            echo "成功安装B·B·R·v·3"
-            echo "·请重启系统·"
+            echo "成功安装~请重启"
             cd .. && rm -rf BBRv3
         else
-            echo "安装B·B·R·v·3失败"
+            echo "安装失败"
             exit 1
         fi
         cd .. && rm -rf BBRv3
-    else
-        echo "没有B·B·R·v·3目录"
+        else
+        echo "找不到目录"
         exit 1
     fi
 }
 
 # Menu display
-echo "BBRv3 Installation Menu"
-echo "1. Install BBRv3"
-echo "2. Exit"
+echo "一键安装~BBRv3~脚本"
+echo "1. ~安装~BBRv3~"
+echo "0. ~退出~"
 
 read -p "Enter your choice: " choice
 
@@ -47,7 +46,7 @@ case $choice in
     1)
         install_BBRv3
         ;;
-    2)
+    0)
         echo "Exiting..."
         ;;
     *)
