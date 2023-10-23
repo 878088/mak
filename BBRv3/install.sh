@@ -40,10 +40,11 @@ install_BBRv3() {
     fi
 }
 uninstall_BBRv3() {
-if dpkg -l | grep -q bbrv3 | awk '{print $2}' then
-    echo "BBRv3 string is found."
+package=$(dpkg -l | grep -q bbrv3 | awk '{print $2}')
+if [ -n "$package" ]; then
+    echo "$package" | xargs apt-get purge -y
 else
-    echo "BBRv3 string is not found."
+    echo "卸载失败没有BBRv3内核"
 fi
 }
 # Menu display
