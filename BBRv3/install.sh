@@ -48,6 +48,7 @@ else
 fi
 }
 # Menu display
+echo ""
 echo "  一键安装~BBRv3~脚本   "
 echo ""
 echo "1. ~安装~BBRv3~"
