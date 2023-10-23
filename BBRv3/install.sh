@@ -26,7 +26,8 @@ install_BBRv3() {
         if [ $? -eq 0 ]; then
             echo ""
             echo "成功安装~请重启"
-            cd .. && rm -rf BBRv3
+            cd
+            rm -rf BBRv3
         else
             echo ""
             echo "安装失败"
