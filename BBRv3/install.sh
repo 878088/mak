@@ -24,25 +24,31 @@ install_BBRv3() {
     if [ -d "BBRv3" ]; then
         cd BBRv3 && dpkg -i *.deb
         if [ $? -eq 0 ]; then
+            echo ""
             echo "成功安装~请重启"
             cd .. && rm -rf BBRv3
         else
+            echo ""
             echo "安装失败"
             exit 1
         fi
         cd .. && rm -rf BBRv3
         else
+        echo ""
         echo "找不到目录"
         exit 1
     fi
 }
 uninstall_BBRv3() {
-if dpkg -l | grep -q "BBRv3"; then
-    dpkg -l | grep "BBRv3" | awk '{print $2}' | xargs apt-get purge -y
+if dpkg -l | grep -q bbrv3 | awk '{print $2}' | grep -q BBRv3; then
+    echo "BBRv3 string is found."
+else
+    echo "BBRv3 string is not found."
 fi
 }
 # Menu display
-echo "   一键安装~BBRv3~脚本   "
+echo "  一键安装~BBRv3~脚本   "
+echo ""
 echo "1. ~安装~BBRv3~"
 echo "2. ~卸载~BBRv3~"
 echo "0. ~退出~"
