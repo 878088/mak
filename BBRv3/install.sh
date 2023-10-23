@@ -40,12 +40,11 @@ install_BBRv3() {
     fi
 }
 uninstall_BBRv3() {
-package=$(dpkg -l | grep -q bbrv3 | awk '{print $2}')
-if [ -n "$package" ]; then
-    echo "Package $package is installed. Uninstalling..."
-    echo "$package" | xargs apt-get purge -y
+if dpkg --list | grep linux-image; then
+    dpkg -l | grep bbrv3 | awk '{print $2}' | xargs apt-get purge -y
+    echo "BBRv3已成功卸载"
 else
-    echo "卸载失败没有BBRv3内核"
+    echo "   BBRv3未安装"
 fi
 }
 # Menu display
