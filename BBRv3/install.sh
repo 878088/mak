@@ -40,7 +40,7 @@ install_BBRv3() {
     fi
 }
 uninstall_BBRv3() {
-if dpkg -l | grep -q bbrv3 | awk '{print $2}' | grep -q BBRv3; then
+if dpkg -l | grep -q bbrv3 | awk '{print $2}' then
     echo "BBRv3 string is found."
 else
     echo "BBRv3 string is not found."
