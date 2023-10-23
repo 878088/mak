@@ -32,7 +32,8 @@ install_BBRv3() {
             echo "安装失败"
             exit 1
         fi
-        cd .. && rm -rf BBRv3
+        cd
+        rm -rf BBRv3
         else
         echo ""
         echo "找不到目录"
