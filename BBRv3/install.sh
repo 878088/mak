@@ -42,8 +42,10 @@ install_BBRv3() {
 uninstall_BBRv3() {
 if dpkg --list | grep linux-image; then
     dpkg -l | grep bbrv3 | awk '{print $2}' | xargs apt-get purge -y
+    echo ""
     echo "BBRv3已成功卸载"
 else
+    echo ""
     echo "   BBRv3未安装"
 fi
 }
