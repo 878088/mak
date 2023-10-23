@@ -1,6 +1,6 @@
 #!/bin/bash
 if ! command -v jq &> /dev/null; then
-    apt-get install -y jq
+    apt-get install -y jq > /dev/null
 fi
 install_BBRv3() {
     API="https://api.github.com/repos/878088/BBRv3/releases"
@@ -36,10 +36,15 @@ install_BBRv3() {
         exit 1
     fi
 }
-
+uninstall_BBRv3() {
+if dpkg -l | grep -q "BBRv3"; then
+    dpkg -l | grep "BBRv3" | awk '{print $2}' | xargs apt-get purge -y
+fi
+}
 # Menu display
-echo "一键安装~BBRv3~脚本"
+echo "   一键安装~BBRv3~脚本   "
 echo "1. ~安装~BBRv3~"
+echo "2. ~卸载~BBRv3~"
 echo "0. ~退出~"
 
 read -p "选择安装: " choice
@@ -47,6 +52,9 @@ read -p "选择安装: " choice
 case $choice in
     1)
         install_BBRv3
+        ;;
+    2)
+        uninstall_BBRv3
         ;;
     0)
         echo "Exiting..."
