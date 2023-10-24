@@ -1,4 +1,5 @@
 #!/bin/bash
+kernel=$(uname -r)
 if ! command -v jq &> /dev/null; then
     apt-get install -y jq > /dev/null
 fi
@@ -120,7 +121,8 @@ sysctl -p
     echo "卸载加速完成"
 }
 # Menu display
-echo ""
+echo "内核: $kernel"
+echo "——————————————————————"
 echo "  一键安装~BBRv3~脚本   "
 echo "——————————————————————"
 echo "1. ~安装~BBRv3~"
