@@ -1,7 +1,7 @@
 #!/bin/bash
 kernel=$(uname -r)
 if ! command -v jq &> /dev/null; then
-    apt-get install -y jq > /dev/null
+    apt install -y jq wget > /dev/null
 fi
 install_BBRv3() {
     API="https://api.github.com/repos/878088/BBRv3/releases"
