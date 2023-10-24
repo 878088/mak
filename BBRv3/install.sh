@@ -56,6 +56,8 @@ install_sysctl() {
 sysctl="/etc/sysctl.conf"
 if [ -f /etc/sysctl.conf ]; then
     echo "fs.file-max = 2000000" >> "$sysctl"
+    echo "net.core.default_qdisc = fq_codel" >> "$sysctl"
+    echo "net.ipv4.tcp_congestion_control = bbr" >> "$sysctl"
     echo "net.core.netdev_max_backlog = 16384" >> "$sysctl"
     echo "net.core.optmem_max = 65535" >> "$sysctl"
     echo "net.ipv4.tcp_rmem = 8192 1048576 16777216" >> "$sysctl"
@@ -90,6 +92,8 @@ fi
 uninstall_sysctl() {
 sysctl="/etc/sysctl.conf"
 sed -i '/^fs.file-max/d' "$sysctl"
+sed -i '/^net.core.default_qdisc/d' "$sysctl"
+sed -i '/^net.ipv4.tcp_congestion_control/d' "$sysctl"
 sed -i '/^net.core.netdev_max_backlog/d' "$sysctl"
 sed -i '/^net.core.optmem_max/d' "$sysctl"
 sed -i '/^net.ipv4.tcp_rmem/d' "$sysctl"
