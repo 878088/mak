@@ -121,10 +121,11 @@ sysctl -p
     echo "卸载加速完成"
 }
 # Menu display
-echo "内核: $kernel"
-echo "——————————————————————"
+echo ""
 echo "  一键安装~BBRv3~脚本   "
-echo "——————————————————————"
+echo ""
+echo "内核: $kernel"
+echo ""
 echo "1. ~安装~BBRv3~"
 echo "2. ~卸载~BBRv3~"
 echo "——————————————————————"
