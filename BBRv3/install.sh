@@ -1,6 +1,7 @@
 #!/bin/bash
 kernel=$(uname -r)
 version=$(curl -s https://www.kernel.org/releases.json | jq -r '.latest_stable.version')
+github=$(curl -s "https://api.github.com/repos/878088/BBRv3/releases" | jq -r '.[].tag_name')
 if ! command -v jq &> /dev/null; then
     apt install -y jq wget > /dev/null
 fi
@@ -129,8 +130,9 @@ sysctl -p
 echo ""
 echo "  一键安装~BBRv3~脚本   "
 echo ""
-echo "新版内核: $version"
-echo "系统内核: $kernel"
+echo "最新Kernel: $version"
+echo "Github版本:  $github"
+echo "系统内核版本: $kernel"
 echo ""
 echo "——————————————————————"
 echo "1. ~安装~BBRv3~"
