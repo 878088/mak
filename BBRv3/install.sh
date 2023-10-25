@@ -1,5 +1,6 @@
 #!/bin/bash
 kernel=$(uname -r)
+version=$(curl -s https://www.kernel.org/releases.json | jq -r '.latest_stable.version')
 if ! command -v jq &> /dev/null; then
     apt install -y jq wget > /dev/null
 fi
@@ -128,7 +129,8 @@ sysctl -p
 echo ""
 echo "  一键安装~BBRv3~脚本   "
 echo ""
-echo "内核: $kernel"
+echo "新版内核: $version"
+echo "系统内核: $kernel"
 echo ""
 echo "——————————————————————"
 echo "1. ~安装~BBRv3~"
