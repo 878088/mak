@@ -13,3 +13,4 @@ EOF
 cat > name/CFDNS.sh <<EOF
 curl -u "$username:$token" "https://api.dev.name.com/v4/domains/$domain:setNameservers" -X POST -H 'Content-Type: application/json' --data '{"nameservers":["$DNS","$DNS2"]}'
 EOF
+chmod +x name/NAMEDNS.sh name/CFDNS.sh
