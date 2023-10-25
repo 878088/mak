@@ -1,9 +1,9 @@
 #!/bin/bash
-kernel=$(uname -r)
-version=$(curl -s https://www.kernel.org/releases.json | jq -r '.latest_stable.version')
 if ! command -v jq &> /dev/null; then
     apt install -y jq wget > /dev/null
 fi
+kernel=$(uname -r)
+version=$(curl -s https://www.kernel.org/releases.json | jq -r '.latest_stable.version')
 install_BBRv3() {
     API="https://api.github.com/repos/878088/BBRv3/releases"
     response=$(curl -s "$API")
