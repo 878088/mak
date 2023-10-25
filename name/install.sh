@@ -1,7 +1,9 @@
 #!/bin/bash
+
 if [ ! -d "name" ]; then
    mkdir "name"
 fi
+
 read -p "请输入用户名: " username
 read -p "请输入令牌: " token
 read -p "请输入域名: " domain
