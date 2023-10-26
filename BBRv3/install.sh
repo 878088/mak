@@ -8,7 +8,7 @@ fi
 install_BBRv3() {
     API="https://api.github.com/repos/878088/BBRv3/releases"
     response=$(curl -s "$API")
-    download_urls=$(echo "$response" | jq -r '.[].assets[] | select((.browser_download_url | contains("linux-libc-dev")) | not) | .browser_download_url')
+    download_urls=$(echo "$response" | jq -r '.[0].assets[] | select((.browser_download_url | contains("linux-libc-dev")) | not) | .browser_download_url')
     arch=$(dpkg --print-architecture)
     if [ "$arch" == "amd64" ]; then
         download_urls=$(echo "$download_urls" | grep "amd64")
