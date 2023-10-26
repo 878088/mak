@@ -2,7 +2,7 @@
 kernel=$(uname -r)
 
 if ! command -v jq &> /dev/null; then
-    apt install -y jq wget > /dev/null
+    apt install -y jq > /dev/null
 fi
 
 install_BBRv3() {
