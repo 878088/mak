@@ -3,7 +3,7 @@ kernel=$(uname -r)
 current_tcp_algorithm=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
 available_tcp_algorithms=$(cat /proc/sys/net/ipv4/tcp_available_congestion_control)
 if ! command -v jq &> /dev/null; then
-    apt install -y jq > /dev/null
+    apt install jq -y > /dev/null
 fi
 
 install_BBRv3() {
