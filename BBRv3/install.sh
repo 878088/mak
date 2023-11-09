@@ -2,6 +2,7 @@
 kernel=$(uname -r)
 current_tcp_algorithm=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
 available_tcp_algorithms=$(cat /proc/sys/net/ipv4/tcp_available_congestion_control)
+default_qdisc=$(sysctl net.core.default_qdisc | awk '{print $3}')
 if ! command -v jq &> /dev/null; then
     apt-get install jq -y > /dev/null
 fi
@@ -134,6 +135,7 @@ echo ""
 echo "内核版本: $kernel"
 echo "内核TCP拥塞控制算法: $current_tcp_algorithm"
 echo "内核支持的TCP拥塞控制算法: $available_tcp_algorithms"
+echo "队列算法: $default_qdisc"
 echo ""
 echo "——————————————————————"
 echo "1. ~安装~BBRv3~"
