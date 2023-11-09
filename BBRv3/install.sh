@@ -1,6 +1,7 @@
 #!/bin/bash
 kernel=$(uname -r)
-
+current_tcp_algorithm=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
+available_tcp_algorithms=$(cat /proc/sys/net/ipv4/tcp_available_congestion_control)
 if ! command -v jq &> /dev/null; then
     apt install -y jq > /dev/null
 fi
@@ -131,6 +132,8 @@ echo ""
 echo "  一键安装~BBRv3~脚本   "
 echo ""
 echo "系统内核版本: $kernel"
+echo "内核使用的TCP拥塞控制算法: $current_tcp_algorithm"
+echo "内核可用的TCP拥塞控制算法: $available_tcp_algorithms"
 echo ""
 echo "——————————————————————"
 echo "1. ~安装~BBRv3~"
