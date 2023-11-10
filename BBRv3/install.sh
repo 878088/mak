@@ -3,8 +3,10 @@ kernel=$(uname -r)
 current_tcp_algorithm=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
 available_tcp_algorithms=$(cat /proc/sys/net/ipv4/tcp_available_congestion_control)
 default_qdisc=$(sysctl net.core.default_qdisc | awk '{print $3}')
+
 if ! command -v jq &> /dev/null; then
-    apt-get install jq -y > /dev/null
+    sudo apt-get update -y > /dev/null
+    sudo apt-get install jq -y > /dev/null
 fi
 
 install_BBRv3() {
