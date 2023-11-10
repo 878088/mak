@@ -5,8 +5,13 @@ available_tcp_algorithms=$(cat /proc/sys/net/ipv4/tcp_available_congestion_contr
 default_qdisc=$(sysctl net.core.default_qdisc | awk '{print $3}')
 
 if ! command -v jq &> /dev/null; then
-    sudo apt-get update -y > /dev/null
-    sudo apt-get install jq -y > /dev/null
+    echo -e "\033[33m检测没有JQ正在安装...\033[0m"
+    if sudo apt-get update -y > /dev/null && sudo apt-get install jq -y > /dev/null; then
+        echo -e "\033[32m安装JQ成功\033[0m"
+    else
+        echo -e "\033[31m安装JQ失败\033[0m"
+        exit 1
+    fi
 fi
 
 install_BBRv3() {
@@ -19,43 +24,38 @@ install_BBRv3() {
     elif [ "$arch" == "arm64" ]; then
         download_urls=$(echo "$download_urls" | grep "arm64")
     else
-        echo "Unsupported architecture: $arch"
+        echo -e "\033[31m不支持的架构: $arch\033[0m"
         exit 1
     fi
     mkdir -p BBRv3
     while read -r url; do
         filename=$(basename "$url")
-        echo "Downloading: $filename"
+        echo -e "\033[33m正在下载: $filename\033[0m"
         wget -q --show-progress "$url" -P BBRv3
     done <<< "$download_urls"
     if [ -d "BBRv3" ]; then
         cd BBRv3 && dpkg -i *.deb
         if [ $? -eq 0 ]; then
-            echo ""
-            echo "成功安装~请重启"
+            echo -e "\033[32m\n🎉🎉安装成功🎉🎉请使用{reboot}重启\033[0m"
             cd
             rm -rf BBRv3
         else
-            echo ""
-            echo "安装失败"
+            echo -e "\033[31m\n😭😭安装失败😭😭\033[0m"
             exit 1
         fi
         cd
         rm -rf BBRv3
         else
-        echo ""
-        echo "找不到目录"
+        echo -e "\033[31m\n😭😭找不到目录😭😭\033[0m"
         exit 1
     fi
 }
 uninstall_BBRv3() {
 if dpkg --list | grep linux-image; then
     dpkg -l | grep bbrv3 | awk '{print $2}' | xargs apt-get purge -y
-    echo ""
-    echo "BBRv3已成功卸载"
+    echo -e "\033[32m\nBBRv3 已成功卸载\033[0m"
 else
-    echo ""
-    echo "   BBRv3未安装"
+    echo -e "\033[31m\n未安装 BBRv3\033[0m"
 fi
 }
 install_sysctl() {
@@ -91,8 +91,7 @@ if [ -f /etc/sysctl.conf ]; then
     echo "vm.swappiness = 10" >> "$sysctl"
     echo "vm.vfs_cache_pressure = 50" >> "$sysctl"
     sysctl -p
-    echo ""
-    echo "添加加速完成"
+    echo -e "\033[32m\n已添加Linux参数\033[0m"
 fi
 }
 uninstall_sysctl() {
@@ -127,26 +126,22 @@ sed -i '/^vm.min_free_kbytes/d' "$sysctl"
 sed -i '/^vm.swappiness/d' "$sysctl"
 sed -i '/^vm.vfs_cache_pressure/d' "$sysctl"
 sysctl -p
-    echo ""
-    echo "卸载加速完成"
+    echo -e "\033[32m\n已卸载Linux参数\033[0m"
 }
 # Menu display
-echo ""
-echo "  一键安装~BBRv3~脚本   "
-echo ""
-echo "内核版本: $kernel"
-echo "内核TCP拥塞控制算法: $current_tcp_algorithm"
-echo "内核支持的TCP拥塞控制算法: $available_tcp_algorithms"
-echo "队列算法: $default_qdisc"
-echo ""
-echo "——————————————————————"
-echo "1. ~安装~BBRv3~"
-echo "2. ~卸载~BBRv3~"
-echo "——————————————————————"
-echo "3. ~安装Linux内核参数~"
-echo "4. ~卸载Linux内核参数~"
-echo "——————————————————————"
-echo "0. ~退出~"
+echo -e "\033[33m\n  一键安装~BBRv3~脚本   \033[0m"
+echo -e "\033[33m内核版本: $kernel\033[0m"
+echo -e "\033[33m内核TCP拥塞控制算法: $current_tcp_algorithm\033[0m"
+echo -e "\033[33m内核支持的 TCP 拥塞控制算法: $available_tcp_algorithms\033[0m"
+echo -e "\033[33m队列算法: $default_qdisc\033[0m"
+echo -e "\033[33m\n——————————————————————\033[0m"
+echo -e "\033[33m1. ~安装~BBRv3~\033[0m"
+echo -e "\033[33m2. ~卸载~BBRv3~\033[0m"
+echo -e "\033[33m——————————————————————\033[0m"
+echo -e "\033[33m3. ~安装Linux内核参数~\033[0m"
+echo -e "\033[33m4. ~卸载Linux内核参数~\033[0m"
+echo -e "\033[33m——————————————————————\033[0m"
+echo -e "\033[33m0. ~退出~\033[0m"
 
 read -p "选择安装: " choice
 
@@ -164,9 +159,9 @@ case $choice in
         uninstall_sysctl
         ;;
     0)
-        echo "Exiting..."
+        echo -e "\033[33m退出...\033[0m"
         ;;
     *)
-        echo "Invalid choice"
+        echo -e "\033[31m选择无效\033[0m"
         ;;
 esac
