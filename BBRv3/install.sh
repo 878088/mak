@@ -128,20 +128,19 @@ sed -i '/^vm.vfs_cache_pressure/d' "$sysctl"
 sysctl -p
     echo -e "\033[32m\n已卸载Linux参数\033[0m"
 }
-# Menu display
-echo -e "\033[33m\n  一键安装~BBRv3~脚本   \033[0m"
-echo -e "\033[33m内核版本: $kernel\033[0m"
-echo -e "\033[33m内核TCP拥塞控制算法: $current_tcp_algorithm\033[0m"
-echo -e "\033[33m内核支持的 TCP 拥塞控制算法: $available_tcp_algorithms\033[0m"
-echo -e "\033[33m队列算法: $default_qdisc\033[0m"
-echo -e "\033[33m\n——————————————————————\033[0m"
-echo -e "\033[33m1. ~安装~BBRv3~\033[0m"
-echo -e "\033[33m2. ~卸载~BBRv3~\033[0m"
-echo -e "\033[33m——————————————————————\033[0m"
-echo -e "\033[33m3. ~安装Linux内核参数~\033[0m"
-echo -e "\033[33m4. ~卸载Linux内核参数~\033[0m"
-echo -e "\033[33m——————————————————————\033[0m"
-echo -e "\033[33m0. ~退出~\033[0m"
+
+echo -e "\033[37m\n  一键安装~BBRv3~脚本   \033[0m"
+echo -e "\033[33m内核TCP拥塞控制算法: \033[32m$current_tcp_algorithm\033[0m"
+echo -e "\033[33m内核支持的TCP拥塞控制算法: \033[32m$available_tcp_algorithms\033[0m"
+echo -e "\033[33m队列算法: \033[32m$default_qdisc\033[0m"
+echo -e "\033[32m\n——————————————————————\033[0m"
+echo -e "\033[33m1. \033[37m~安装~BBRv3~\033[0m"
+echo -e "\033[33m2. \033[37m~卸载~BBRv3~\033[0m"
+echo -e "\033[32m——————————————————————\033[0m"
+echo -e "\033[33m3. \033[37m~安装Linux内核参数~\033[0m"
+echo -e "\033[33m4. \033[37m~卸载Linux内核参数~\033[0m"
+echo -e "\033[32m——————————————————————\033[0m"
+echo -e "\033[33m0. \033[37m~退出~\033[0m"
 
 read -p "选择安装: " choice
 
