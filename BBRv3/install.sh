@@ -36,17 +36,17 @@ install_BBRv3() {
     if [ -d "BBRv3" ]; then
         cd BBRv3 && dpkg -i *.deb
         if [ $? -eq 0 ]; then
-            echo -e "\033[32m\n🎉🎉安装成功🎉🎉请使用{reboot}重启\033[0m"
+            echo -e "\033[32m\n🎉🎉 安装成功 🎉🎉 请使用{reboot}重启\033[0m"
             cd
             rm -rf BBRv3
         else
-            echo -e "\033[31m\n😭😭安装失败😭😭\033[0m"
+            echo -e "\033[31m\n😭😭 安装失败 😭😭\033[0m"
             exit 1
         fi
         cd
         rm -rf BBRv3
         else
-        echo -e "\033[31m\n😭😭找不到目录😭😭\033[0m"
+        echo -e "\033[31m\n😭😭 找不到目录 😭😭\033[0m"
         exit 1
     fi
 }
@@ -130,6 +130,8 @@ sysctl -p
 }
 
 echo -e "\033[37m\n一键安装~BBRv3~脚本\033[0m"
+echo ""
+echo -e "\033[33m编译者: \033[32m粑屁 Telegram @MJJBPG\033[0m"
 echo ""
 echo -e "\033[33m当前内核版本: \033[32m$kernel\033[0m"
 echo -e "\033[33m内核TCP拥塞控制算法: \033[32m$current_tcp_algorithm\033[0m"
