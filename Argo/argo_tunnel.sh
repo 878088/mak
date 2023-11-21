@@ -162,14 +162,6 @@ ingress:
 originRequest:
   connectTimeout: 10s
   noTLSVerify: false
-  http2Origin: true
-  noHappyEyeballs: true
-  disableChunkedEncoding: true
-  keepAliveTimeout: 1s
-  keepAliveConnections: 1
-  region: us-region1.v2.argotunnel.com
-replica:
-  allNodes: true
 EOF
 
   echo "配置文件已经保存到：/root/${name}.yml"
