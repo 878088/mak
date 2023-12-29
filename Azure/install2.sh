@@ -88,3 +88,15 @@ read -p "请输入用户名： " USERNAME
 read -sp "请输入密码： " PASSWORD
 
 az group create --name $REGION_CODE --location $REGION_CODE && az vm create --resource-group $REGION_CODE --name $REGION_CODE --location $REGION_CODE --image $IMAGE_CODE --size $SIZE_CODE --admin-username $USERNAME --admin-password $PASSWORD --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic &&az vm open-port --ids $(az vm list -g $REGION_CODE --query "[].id" -o tsv) --port '*'
+}
+
+execute
+
+while true; do
+  read -p "是否需要执行第二次 (y/n)? " yn
+  case $yn in
+    [Yy]* ) execute;;
+    [Nn]* ) break;;
+    * ) echo "请输入 y 或 n.";;
+  esac
+done
