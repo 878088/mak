@@ -45,7 +45,13 @@ IMAGES=(
   ["Ubuntu 22.04"]="Ubuntu2204"
 )
 
-echo "请选择地区："
+declare -A SIZES
+SIZES=(
+  ["Standard_B1s"]="Standard_B1s"
+  ["Standard_D4as_v4"]="Standard_D4as_v4"
+)
+
+echo "请选择一个地区："
 select REGION in "${!REGIONS[@]}"; do
   if [ "$REGION" ]; then
     echo "您选择的是 $REGION"
@@ -56,7 +62,7 @@ select REGION in "${!REGIONS[@]}"; do
   fi
 done
 
-echo "请选择镜像："
+echo "请选择一个镜像："
 select IMAGE in "${!IMAGES[@]}"; do
   if [ "$IMAGE" ]; then
     echo "您选择的是 $IMAGE"
@@ -67,4 +73,18 @@ select IMAGE in "${!IMAGES[@]}"; do
   fi
 done
 
-az group create --name $REGION_CODE --location $REGION_CODE && az vm create --resource-group $REGION_CODE --name $REGION_CODE --location $REGION_CODE --image $IMAGE_CODE --size Standard_B1s --admin-username ooo --admin-password JINguang520. --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic
+echo "请选择一个虚拟机大小："
+select SIZE in "${!SIZES[@]}"; do
+  if [ "$SIZE" ]; then
+    echo "您选择的是 $SIZE"
+    SIZE_CODE=${SIZES[$SIZE]}
+    break
+  else
+    echo "无效的选项"
+  fi
+done
+
+read -p "请输入用户名： " USERNAME
+read -sp "请输入密码： " PASSWORD
+
+az group create --name $REGION_CODE --location $REGION_CODE && az vm create --resource-group $REGION_CODE --name $REGION_CODE --location $REGION_CODE --image $IMAGE_CODE --size $SIZE_CODE --admin-username $USERNAME --admin-password $PASSWORD --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic
