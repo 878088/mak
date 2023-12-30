@@ -49,7 +49,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
 
     az group create --name "$LOCATION-rg" --location $LOCATION
 
-    az vm create \
+    output=$(az vm create \
         --resource-group "$LOCATION-rg" \
         --name "$LOCATION-vm" \
         --location $LOCATION \
@@ -59,8 +59,15 @@ for LOCATION in "${LOCATIONS[@]}"; do
         --admin-password "$PASSWORD" \
         --security-type Standard \
         --public-ip-sku Basic \
-        --public-ip-address-allocation Dynamic
+        --public-ip-address-allocation Dynamic 2>&1)
 
+    if [ $? -eq 0 ]; then
+        echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
+    else
+        echo -e "\e[31m$LOCATION-vm 虚拟机创建失败，错误信息如下：\e[0m"
+        echo -e "\e[31m$output\e[0m"
+        exit 1
+    fi
 done
 
 echo -e "\e[32m所有资源已创建完成\e[0m"
