@@ -3,22 +3,25 @@ LOCATIONS=("westus3")
 VM_IMAGE="Debian11"
 VM_SIZE="Standard_D4as_v4"
 
-read -p "请输入用户名: " USERNAME
-read -p "请输入密码: " PASSWORD
-echo
+while true; do
+    read -p "请输入用户名: " USERNAME
+    read -p "请输入密码: " PASSWORD
+    echo
 
-# 用户名规则
-if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\\[\\]:|<>+=;,?*@#()!] || "$USERNAME" =~ ^[\\$-] ]]; then
-    echo "错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头"
-    exit 1
-fi
+    if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\\[\\]:|+=;,?*@#()!] || "$USERNAME" =~ ^[\\$-] || "$USERNAME" =~ $'\x3C' || "$USERNAME" =~ $'\x3E' ]]; then
+        echo "错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头"
+        continue
+    fi
 
-# 密码规则
-PASSWORD_LENGTH=${#PASSWORD}
-if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\\$%\\^&*\\(\\)_+\\-\\=\\[\\]{};':\"\\\\|,.<>\\/?] ) ]]; then
-    echo "错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符"
-    exit 1
-fi
+    PASSWORD_LENGTH=${#PASSWORD}
+    if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\\$%\\^&*\\(\\)_+\\-\\=\\[\\]{};':\"\\\\|,./?] ) || "$PASSWORD" =~ $'\x3C' || "$PASSWORD" =~ $'\x3E' ]]; then
+        echo "错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符"
+        continue
+    fi
+
+    echo "用户名和密码验证成功"
+    break
+done
 
 for LOCATION in "${LOCATIONS[@]}"; do
     RESOURCE_GROUP="$LOCATION-rg"
