@@ -8,13 +8,13 @@ while true; do
     read -p "请输入密码: " PASSWORD
     echo
 
-    if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\\[\\]:|+=;,?*@#()!] || "$USERNAME" =~ ^[\\$-] || "$USERNAME" =~ $'\x3C' || "$USERNAME" =~ $'\x3E' ]]; then
+    if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\\[\\]:|+=;,?*@#()!] || "$USERNAME" =~ ^[\\$-] || "$USERNAME" =~ '<' || "$USERNAME" =~ '>' ]]; then
         echo "错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头"
         continue
     fi
 
     PASSWORD_LENGTH=${#PASSWORD}
-    if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\\$%\\^&*\\(\\)_+\\-\\=\\[\\]{};':\"\\\\|,./?] ) || "$PASSWORD" =~ $'\x3C' || "$PASSWORD" =~ $'\x3E' ]]; then
+    if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\\$%\\^&*\\(\\)_+\\-\\=\\[\\]{};':\"\\\\|,./?] ) || "$PASSWORD" =~ '<' || "$PASSWORD" =~ '>' ]]; then
         echo "错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符"
         continue
     fi
