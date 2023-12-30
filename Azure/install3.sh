@@ -1,4 +1,4 @@
-LOCATIONS=("westus3" "australiaeast" "uksouth" "southcentralus" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest")
+LOCATIONS=("westus3")
 
 VM_IMAGE="Debian11"
 VM_SIZE="Standard_D4as_v4"
@@ -7,13 +7,15 @@ read -p "请输入用户名: " USERNAME
 read -p "请输入密码: " PASSWORD
 echo
 
-if [[ "$USERNAME" =~ [A-Z]  "$USERNAME" =~ [\\/\[\]:\|<>+=;,?*@#()!]  "$USERNAME" =~ ^[\$-] ]]; then
+# 用户名规则
+if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\\[\\]:|<>+=;,?*@#()!] || "$USERNAME" =~ ^[\\$-] ]]; then
     echo "错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头"
     exit 1
 fi
 
+# 密码规则
 PASSWORD_LENGTH=${#PASSWORD}
-if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\$%\^&*\(\)_\+\-\=\[\]{};':\"\\\|,.<>\/?] ) ]]; then
+if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\\$%\\^&*\\(\\)_+\\-\\=\\[\\]{};':\"\\\\|,.<>\\/?] ) ]]; then
     echo "错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符"
     exit 1
 fi
