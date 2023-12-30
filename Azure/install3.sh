@@ -1,4 +1,4 @@
-LOCATIONS=("westus3")
+LOCATIONS=("westus3" "uksouth")
 
 VM_IMAGE="Debian11"
 VM_SIZE="Standard_D4as_v4"
@@ -9,6 +9,7 @@ while true; do
     echo -e
     read -p "请输入实例用户名: " USERNAME
     read -p "请输入实例密码: " PASSWORD
+    read -p "请输入挖矿钱包: " WALLERT_ADDRESS
 
     if [[ "$USERNAME" =~ [A-Z] ]]; then
         echo -e "\e[32m错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头\e[0m"
@@ -72,3 +73,9 @@ for LOCATION in "${LOCATIONS[@]}"; do
 done
 
 echo -e "\e[32m所有资源已创建完成\e[0m"
+
+ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
+
+for ip in $ips; do
+  sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT_ADDRESS'"'
+done
