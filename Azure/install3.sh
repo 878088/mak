@@ -45,22 +45,17 @@ fi
 done
 
 for LOCATION in "${LOCATIONS[@]}"; do
-    RESOURCE_GROUP="$LOCATION-rg"
 
-    if az group exists --name "$RESOURCE_GROUP"; then
-        echo -e "\e[32m资源组 $RESOURCE_GROUP 已存在，将不再创建\e[0m"
-    else
-        az group create --name "$RESOURCE_GROUP" --location $LOCATION
-    fi
+    az group create --name "$LOCATION-rg" --location $LOCATION
 
     az vm create \
-        --resource-group "$RESOURCE_GROUP" \
+        --resource-group "$LOCATION-rg" \
         --name "$LOCATION-vm" \
         --location $LOCATION \
         --image $VM_IMAGE \
         --size $VM_SIZE \
-        --admin-username "$USERNAME" \
-        --admin-password "$PASSWORD" \
+        --admin-username "$ADMIN_USERNAME" \
+        --admin-password "$ADMIN_PASSWORD" \
         --security-type Standard \
         --public-ip-sku Basic \
         --public-ip-address-allocation Dynamic
