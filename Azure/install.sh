@@ -5,7 +5,7 @@ install_azure() {
 
     if [ "$os" == "Ubuntu" ] || [ "$os" == "Debian" ]; then
         sudo apt-get update -y
-        sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg jq -y
+        sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg jq sshpass screen -y
 
         echo "检查目录是否存在"
         if [ ! -d "/etc/apt/keyrings" ]; then
