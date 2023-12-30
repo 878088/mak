@@ -4,22 +4,23 @@ VM_IMAGE="Debian11"
 VM_SIZE="Standard_D4as_v4"
 
 while true; do
-    read -p "请输入用户名: " USERNAME
-    read -p "请输入密码: " PASSWORD
-    echo
+    echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头\e[0m"
+    echo -e "\e[32m密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
+    read -p "请输入实例用户名: " USERNAME
+    read -p "请输入实例密码: " PASSWORD
 
-    if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\\[\\]:|+=;,?*@#()!] || "$USERNAME" =~ ^[\\$-] || "$USERNAME" =~ '<' || "$USERNAME" =~ '>' ]]; then
-        echo "错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头"
+    if [[ "$USERNAME" =~ [A-Z] ]]; then
+        echo -e "\e[32m错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头\e[0m"
         continue
     fi
 
     PASSWORD_LENGTH=${#PASSWORD}
-    if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] && "$PASSWORD" =~ [!@#\\$%\\^&*\\(\\)_+\\-\\=\\[\\]{};':\"\\\\|,./?] ) || "$PASSWORD" =~ '<' || "$PASSWORD" =~ '>' ]]; then
-        echo "错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符"
+    if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] ]]; then
+        echo -e "\e[32m错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
         continue
     fi
 
-    echo "用户名和密码验证成功"
+    echo -e "\e[32m用户名和密码验证成功\e[0m"
     break
 done
 
@@ -27,7 +28,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
     RESOURCE_GROUP="$LOCATION-rg"
 
     if az group exists --name "$RESOURCE_GROUP"; then
-        echo "资源组 $RESOURCE_GROUP 已存在，将不再创建"
+        echo -e "\e[32m资源组 $RESOURCE_GROUP 已存在，将不再创建\e[0m"
     else
         az group create --name "$RESOURCE_GROUP" --location $LOCATION
     fi
@@ -46,4 +47,4 @@ for LOCATION in "${LOCATIONS[@]}"; do
 
 done
 
-echo "所有资源已创建完成"
+echo -e "\e[32m所有资源已创建完成\e[0m"
