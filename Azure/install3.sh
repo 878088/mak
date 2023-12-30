@@ -7,7 +7,7 @@ read -p "请输入用户名: " USERNAME
 read -p "请输入密码: " PASSWORD
 echo
 
-if [[ "$USERNAME" =~ [A-Z] || "$USERNAME" =~ [\\/\[\]:|<>+=;,?*@#()!] || "$USERNAME" =~ ^[\$-] ]]; then
+if [[ "$USERNAME" =~ [A-Z]  "$USERNAME" =~ [\\/\[\]:\|<>+=;,?*@#()!]  "$USERNAME" =~ ^[\$-] ]]; then
     echo "错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头"
     exit 1
 fi
