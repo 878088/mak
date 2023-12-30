@@ -6,6 +6,7 @@ VM_SIZE="Standard_D4as_v4"
 while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头\e[0m"
     echo -e "\e[32m密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
+    echo -e
     read -p "请输入实例用户名: " USERNAME
     read -p "请输入实例密码: " PASSWORD
 
@@ -39,7 +40,7 @@ if ! echo "$PASSWORD" | grep -q '[!@#\$%^\&*()]'; then
     echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。\e[0m"
     continue
 fi
-
+    echo -e
     echo -e "\e[32m用户名和密码验证成功\e[0m"
     break
 done
@@ -54,8 +55,8 @@ for LOCATION in "${LOCATIONS[@]}"; do
         --location $LOCATION \
         --image $VM_IMAGE \
         --size $VM_SIZE \
-        --admin-username "$ADMIN_USERNAME" \
-        --admin-password "$ADMIN_PASSWORD" \
+        --admin-username "$USERNAME" \
+        --admin-password "$PASSWORD" \
         --security-type Standard \
         --public-ip-sku Basic \
         --public-ip-address-allocation Dynamic
