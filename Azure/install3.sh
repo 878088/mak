@@ -48,7 +48,9 @@ done
 for LOCATION in "${LOCATIONS[@]}"; do
 
     az group create --name "$LOCATION-rg" --location $LOCATION
-
+    
+    echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
+    
     output=$(az vm create \
         --resource-group "$LOCATION-rg" \
         --name "$LOCATION-vm" \
@@ -66,7 +68,6 @@ for LOCATION in "${LOCATIONS[@]}"; do
     else
         echo -e "\e[31m$LOCATION-vm 虚拟机创建失败，错误信息如下：\e[0m"
         echo -e "\e[31m$output\e[0m"
-        exit 1
     fi
 done
 
