@@ -1,7 +1,8 @@
-LOCATIONS=("westus3" "uksouth")
+LOCATIONS=("westus3" "southcentralus" )
 
 VM_IMAGE="Debian11"
 VM_SIZE="Standard_D4as_v4"
+VM_SIZE_VM="Standard_D4ds_v4"
 
 while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头\e[0m"
@@ -9,7 +10,7 @@ while true; do
     echo -e
     read -p "请输入实例用户名: " USERNAME
     read -p "请输入实例密码: " PASSWORD
-    read -p "请输入挖矿钱包: " WALLERT_ADDRESS
+    read -p "请输入挖矿钱包: " WALLERT
 
     if [[ "$USERNAME" =~ [A-Z] ]]; then
         echo -e "\e[32m错误: 用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#()! 或以 $ 或 - 开头\e[0m"
@@ -50,6 +51,10 @@ for LOCATION in "${LOCATIONS[@]}"; do
 
     az group create --name "$LOCATION-rg" --location $LOCATION
     
+    if [ "$LOCATION" = "southcentralus" ]; then
+        VM_SIZE=$VM_SIZE_VM
+    fi
+    
     echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
     output=$(az vm create \
@@ -77,5 +82,5 @@ echo -e "\e[32m所有资源已创建完成\e[0m"
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 
 for ip in $ips; do
-  sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT_ADDRESS'"'
+  sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
 done
