@@ -1,4 +1,4 @@
-LOCATIONS=("westus3" "southcentralus" )
+LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia")
 
 VM_IMAGE="Debian11"
 VM_SIZE="Standard_D4as_v4"
@@ -51,7 +51,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
 
     az group create --name "$LOCATION-rg" --location $LOCATION
     
-    if [ "$LOCATION" = "southcentralus" ]; then
+    if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
         VM_SIZE=$VM_SIZE_VM
     fi
     
