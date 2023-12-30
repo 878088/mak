@@ -15,10 +15,30 @@ while true; do
     fi
 
     PASSWORD_LENGTH=${#PASSWORD}
-    if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 || !("$PASSWORD" =~ [a-z] && "$PASSWORD" =~ [A-Z] && "$PASSWORD" =~ [0-9] ]]; then
-        echo -e "\e[32m错误: 密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
-        continue
-    fi
+if [[ $PASSWORD_LENGTH -lt 12 || $PASSWORD_LENGTH -gt 72 ]]; then
+    echo -e "\e[32m错误: 密码长度必须在 12 到 72 之间。\e[0m"
+    continue
+fi
+
+if ! echo "$PASSWORD" | grep -q '[a-z]'; then
+    echo -e "\e[32m错误: 密码必须包含至少一个小写字母。\e[0m"
+    continue
+fi
+
+if ! echo "$PASSWORD" | grep -q '[A-Z]'; then
+    echo -e "\e[32m错误: 密码必须包含至少一个大写字母。\e[0m"
+    continue
+fi
+
+if ! echo "$PASSWORD" | grep -q '[0-9]'; then
+    echo -e "\e[32m错误: 密码必须包含至少一个数字。\e[0m"
+    continue
+fi
+
+if ! echo "$PASSWORD" | grep -q '[!@#\$%^\&*()]'; then
+    echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。\e[0m"
+    continue
+fi
 
     echo -e "\e[32m用户名和密码验证成功\e[0m"
     break
