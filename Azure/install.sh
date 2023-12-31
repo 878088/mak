@@ -157,8 +157,6 @@ done
     menu
 }
 
-screen -S vm -dm bash -c "$(declare -f create_vm); create_vm"
-
 menu() {
     echo -e "${GREEN}1. 安装 Azure CLI${NC}"
     echo -e "${GREEN}2. 登录 Azure CLI${NC}"
