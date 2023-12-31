@@ -177,7 +177,8 @@ menu() {
             uninstall_azure
             ;;
         4)
-            create_vm
+            screen -dmS create_vm bash -c "bash <(curl -Ls https://raw.githubusercontent.com/878088/mak/main/Azure/install.sh) create_vm"
+            echo -e "${GREEN}已在后台创建 VM 并运行脚本。你可以使用 'screen -r create_vm' 来查看进度。${NC}"
             ;;
         0)
             echo -e "${RED}退出...${NC}"
@@ -191,3 +192,7 @@ menu() {
 }
 
 menu
+
+if [ "\$1" = "create_vm" ]; then
+    create_vm
+fi
