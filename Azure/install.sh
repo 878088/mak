@@ -3,7 +3,7 @@
 install_azure() {
     os=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
 
-    if [ "$os" == "Ubuntu" ] || [ "$os" == "Debian" ]; then
+    if [ "$os" == "ubuntu" ] || [ "$os" == "debian" ]; then
         sudo apt-get update -y
         sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg jq sshpass screen -y
 
