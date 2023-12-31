@@ -51,9 +51,26 @@ login() {
     menu
 }
 
+uninstall_azure() {
+    if command -v az > /dev/null 2>&1; then
+        echo -e "${GREEN}正在卸载 Azure CLI${NC}"
+        sudo apt-get remove -y azure-cli
+        sudo rm /etc/apt/sources.list.d/azure-cli.list
+        sudo rm /etc/apt/trusted.gpg.d/microsoft.gpg
+        sudo apt autoremove -y
+        rm -rf ~/.azure
+        echo -e "${GREEN}Azure CLI 卸载完成${NC}"
+    else
+        echo -e "${RED}未检测到 Azure CLI 无需卸载${NC}"
+    fi
+
+    menu
+}
+
 menu() {
     echo -e "${GREEN}1. 安装 Azure CLI${NC}"
     echo -e "${GREEN}2. 登录 Azure CLI${NC}"
+    echo -e "${GREEN}3. 卸载 Azure CLI${NC}"
     echo -e "${GREEN}0. 退出${NC}"
     read -p "输入您的选择: " choice
 
@@ -63,6 +80,9 @@ menu() {
             ;;
         2)
             login
+            ;;
+        3)
+            uninstall_azure
             ;;
         0)
             echo -e "${RED}退出...${NC}"
