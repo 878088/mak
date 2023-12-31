@@ -10,7 +10,6 @@ install_azure() {
         sudo apt-get update -y
         sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg jq sshpass screen -y
 
-        echo -e "${GREEN}检查目录是否存在${NC}"
         if [ ! -d "/etc/apt/keyrings" ]; then
             echo -e "${RED}目录不存在，现在创建${NC}"
             sudo mkdir -p /etc/apt/keyrings
@@ -35,6 +34,7 @@ install_azure() {
     else
         echo -e "${RED}没有适配系统${NC}"
     fi
+    menu
 }
 
 login() {
@@ -48,6 +48,7 @@ login() {
     else
         echo -e "${RED}未安装 Azure CLI 请先安装${NC}"
     fi
+    menu
 }
 
 menu() {
@@ -74,5 +75,4 @@ menu() {
     esac
 }
 
-# Call the menu function
 menu
