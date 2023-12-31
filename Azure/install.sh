@@ -177,8 +177,7 @@ menu() {
             uninstall_azure
             ;;
         4)
-            screen -dmS create_vm bash -c 'create_vm'
-            echo -e "${GREEN}已在后台创建全区实例挖矿 。你可以使用 'screen -r create_vm' 来查看进度。${NC}"
+            create_vm
             ;;
         0)
             echo -e "${RED}退出...${NC}"
