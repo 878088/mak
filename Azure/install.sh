@@ -1,7 +1,7 @@
 #!/bin/bash
 
 install_azure() {
-    os=$(lsb_release -i | cut -d: -f2 | sed 's/^[ \t]*//;s/[ \t]*$//')
+    os=$(grep -oP '(?<=^ID=).+' /etc/os-release | tr -d '"')
 
     if [ "$os" == "Ubuntu" ] || [ "$os" == "Debian" ]; then
         sudo apt-get update -y
