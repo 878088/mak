@@ -47,8 +47,6 @@ fi
     break
 done
 
-cat << 'EOF' > "$LOCATION"$.sh
-
 for LOCATION in "${LOCATIONS[@]}"; do
 
     az group create --name "$LOCATION-rg" --location $LOCATION
@@ -59,7 +57,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
     
     echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
-    output=$(az vm create \
+    az vm create \
         --resource-group "$LOCATION-rg" \
         --name "$LOCATION-vm" \
         --location $LOCATION \
@@ -69,7 +67,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
         --admin-password "$PASSWORD" \
         --security-type Standard \
         --public-ip-sku Basic \
-        --public-ip-address-allocation Dynamic 2>&1)
+        --public-ip-address-allocation Dynamic > $LOCATION.sh 2>&1
 
     if [ $? -eq 0 ]; then
         echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
