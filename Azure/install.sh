@@ -79,6 +79,7 @@ while true; do
     echo -e
     read -p "请输入实例用户名: " USERNAME
     read -p "请输入实例密码: " PASSWORD
+    echo -e "\e[32m特殊字符适配使用 .!@#\$%^\&*() \e[0m"
     read -p "请输入挖矿钱包: " WALLERT
 
     if [[ "$USERNAME" =~ [A-Z] ]]; then
@@ -106,6 +107,12 @@ if ! echo "$PASSWORD" | grep -q '[0-9]'; then
     echo -e "\e[32m错误: 密码必须包含至少一个数字。\e[0m"
     continue
 fi
+
+if ! echo "$PASSWORD" | grep -q '[.!@#\$%^\&*()]'; then
+    echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。\e[0m"
+    continue
+fi
+
     echo -e
     echo -e "\e[32m用户名和密码验证成功\e[0m"
     break
