@@ -78,8 +78,8 @@ while true; do
     echo -e "\e[32m密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
     echo -e
     read -p "请输入实例用户名: " USERNAME
+    echo -e "\e[32m实例密码的特殊字符适配使用 .!@#\$%^\&*() \e[0m"
     read -p "请输入实例密码: " PASSWORD
-    echo -e "\e[32m特殊字符适配使用 .!@#\$%^\&*() \e[0m"
     read -p "请输入挖矿钱包: " WALLERT
 
     if [[ "$USERNAME" =~ [A-Z] ]]; then
