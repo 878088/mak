@@ -132,9 +132,10 @@ done
 
 for LOCATION in "${LOCATIONS[@]}"; do
     (    
-        if ! az provider show --namespace Microsoft.Resources --query "resourceTypes[?resourceType=='resourceGroups'].locations[]" -o tsv | grep -q -i "$LOCATION"; then
-          echo -e "\e[31m$LOCATION 不可用于资源组。跳过...\e[0m"
-          continue
+        ERROR_OUTPUT=$(az provider show --namespace Microsoft.Resources --query "resourceTypes[?resourceType=='resourceGroups'].locations[]" -o tsv 2>&1 | grep -i "$LOCATION")
+        if [ $? -ne 0 ]; then
+           echo -e "\e[31m$LOCATION 订阅不可用于资源组位置。错误信息: $ERROR_OUTPUT 跳过...\e[0m"
+           continue
         fi
         az group create --name "$LOCATION-rg" --location $LOCATION
     
