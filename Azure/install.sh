@@ -67,6 +67,18 @@ uninstall_azure() {
     menu
 }
 
+check_azure() {
+    if ! command -v az &> /dev/null; then
+        echo -e "\e[31m错误: Azure CLI 没有安装. 请先安装 Azure CLI.\e[0m"
+        exit 1
+    fi
+
+    if ! az account show &> /dev/null; then
+        echo -e "\e[31m错误: 你还没有登录 Azure. 请先运行 'az login' 来登录你的 Azure 账户.\e[0m"
+        exit 1
+    fi
+}
+
 create_vm() {
     LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia")
     VM_IMAGE="Debian11"
