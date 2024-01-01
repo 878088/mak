@@ -153,7 +153,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
         
         while true; do
-            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv)
+            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv 2>/dev/null)
             if [ "$status" = "Succeeded" ]; then
                 echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
                 break
