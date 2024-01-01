@@ -179,14 +179,14 @@ echo -e "\e[32m所有资源已创建完成\e[0m"
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 
 for ip in $ips; do
-  sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
+  nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
 done
 
     menu
 }
 resource_group() {
     for rg in $(az group list --query "[].name" -o tsv); do
-        az group delete --name $rg --yes --no-wait
+        nohup az group delete --name $rg --yes --no-wait
         echo -e "\e[32m成功删除资源组: $rg\e[0m"
     done
 }
