@@ -47,6 +47,8 @@ fi
     break
 done
 
+cat << 'EOF' > "$LOCATION"$.sh
+
 for LOCATION in "${LOCATIONS[@]}"; do
 
     az group create --name "$LOCATION-rg" --location $LOCATION
@@ -78,6 +80,8 @@ for LOCATION in "${LOCATIONS[@]}"; do
 done
 
 echo -e "\e[32m所有资源已创建完成\e[0m"
+
+EOF
 
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 
