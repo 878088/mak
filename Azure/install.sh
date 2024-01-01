@@ -107,8 +107,8 @@ if ! echo "$PASSWORD" | grep -q '[0-9]'; then
     continue
 fi
 
-if ! echo "$PASSWORD" | grep -q '[.!@#\$%^\&*()]'; then
-    echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。\e[0m"
+if ! echo "$PASSWORD" | grep -q '[~`!@#$%^&*()-=_+[\]{}|;:",.<>/?]'; then
+    echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。支持[~`!@#$%^&*()-=_+[\]{}|;:",.<>/?]\e[0m"
     continue
 fi
     echo -e
@@ -117,34 +117,44 @@ fi
 done
 
 for LOCATION in "${LOCATIONS[@]}"; do
-
-    az group create --name "$LOCATION-rg" --location $LOCATION
+    (
+        az group create --name "$LOCATION-rg" --location $LOCATION
     
-    if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
-        VM_SIZE=$VM_SIZE_VM
-    fi
+        if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
+            VM_SIZE=$VM_SIZE_VM
+        fi
     
-    echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
+        echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
-    output=$(az vm create \
-        --resource-group "$LOCATION-rg" \
-        --name "$LOCATION-vm" \
-        --location $LOCATION \
-        --image $VM_IMAGE \
-        --size $VM_SIZE \
-        --admin-username "$USERNAME" \
-        --admin-password "$PASSWORD" \
-        --security-type Standard \
-        --public-ip-sku Basic \
-        --public-ip-address-allocation Dynamic 2>&1)
-
-    if [ $? -eq 0 ]; then
-        echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
-    else
-        echo -e "\e[31m$LOCATION-vm 虚拟机创建失败，错误信息如下：\e[0m"
-        echo -e "\e[31m$output\e[0m"
-    fi
+        az vm create \
+            --resource-group "$LOCATION-rg" \
+            --name "$LOCATION-vm" \
+            --location $LOCATION \
+            --image $VM_IMAGE \
+            --size $VM_SIZE \
+            --admin-username "$USERNAME" \
+            --admin-password "$PASSWORD" \
+            --security-type Standard \
+            --public-ip-sku Basic \
+            --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+        
+        while true; do
+            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv)
+            if [ "$status" = "Succeeded" ]; then
+                echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
+                break
+            elif [[ "$status" = "Failed" || "$status" = "Canceled" || "$status" = "Deleting" ]]; then
+                echo -e "\e[31m$LOCATION-vm 虚拟机创建失败\e[0m"
+                break
+            else
+                echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
+                sleep 10
+            fi
+        done
+    ) &
 done
+
+wait
 
 echo -e "\e[32m所有资源已创建完成\e[0m"
 
