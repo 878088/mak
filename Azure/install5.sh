@@ -15,31 +15,25 @@ while true; do
     echo "#!/bin/bash" > $SCRIPT
     echo "USERNAME=\"$USERNAME\"" >> $SCRIPT
     echo "PASSWORD=\"$PASSWORD\"" >> $SCRIPT
-    echo "WALLET=\"$WALLET\"" >> $SCRIPT
-    echo 'LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia")' >> $SCRIPT
+    echo 'LOCATION="westus3"' >> $SCRIPT
     echo 'VM_IMAGE="Debian11"' >> $SCRIPT
     echo 'VM_SIZE="Standard_D4as_v4"' >> $SCRIPT
-    echo 'VM_SIZE_VM="Standard_D4ds_v4"' >> $SCRIPT
     cat <<'EOF' >> $SCRIPT
-for LOCATION in "${LOCATIONS[@]}"; do
-    az group create --name "$LOCATION-rg" --location $LOCATION
-    az vm create \
-        --resource-group "$LOCATION-rg" \
-        --name "$LOCATION-vm" \
-        --location $LOCATION \
-        --image $VM_IMAGE \
-        --size $VM_SIZE \
-        --admin-username "$USERNAME" \
-        --admin-password "$PASSWORD" \
-        --security-type Standard \
-        --public-ip-sku Basic \
-        --public-ip-address-allocation Dynamic
-done
+az group create --name "$LOCATION-rg" --location $LOCATION
+az vm create \
+    --resource-group "$LOCATION-rg" \
+    --name "$LOCATION-vm" \
+    --location $LOCATION \
+    --image $VM_IMAGE \
+    --size $VM_SIZE \
+    --admin-username "$USERNAME" \
+    --admin-password "$PASSWORD" \
+    --security-type Standard \
+    --public-ip-sku Basic \
+    --public-ip-address-allocation Dynamic
 EOF
     chmod +x $SCRIPT
-
     count=$((count+1))
-
     if [[ $count -gt 5 ]]; then
         break
     fi
