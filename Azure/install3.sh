@@ -38,7 +38,7 @@ if ! echo "$PASSWORD" | grep -q '[0-9]'; then
     continue
 fi
 
-if ! echo "$PASSWORD" | grep -q '[!@#\$%^\&*()]'; then
+if ! echo "$PASSWORD" | grep -q '[.!@#\$%^\&*()]'; then
     echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。\e[0m"
     continue
 fi
@@ -49,7 +49,7 @@ done
 
 for LOCATION in "${LOCATIONS[@]}"; do
 
-    az group create --name "$LOCATION-rg" --location $LOCATION
+    az group create --name "$LOCATION-rg" --location $LOCATION > "$LOCATION.sh" 2>&1
     
     if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
         VM_SIZE=$VM_SIZE_VM
@@ -67,13 +67,13 @@ for LOCATION in "${LOCATIONS[@]}"; do
         --admin-password "$PASSWORD" \
         --security-type Standard \
         --public-ip-sku Basic \
-        --public-ip-address-allocation Dynamic > $LOCATION.sh 2>&1
+        --public-ip-address-allocation Dynamic >> "$LOCATION.sh" 2>&1
 
     if [ $? -eq 0 ]; then
         echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
     else
         echo -e "\e[31m$LOCATION-vm 虚拟机创建失败，错误信息如下：\e[0m"
-        echo -e "\e[31m$output\e[0m"
+        cat "$LOCATION.sh"
     fi
 done
 
