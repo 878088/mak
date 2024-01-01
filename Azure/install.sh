@@ -106,11 +106,6 @@ if ! echo "$PASSWORD" | grep -q '[0-9]'; then
     echo -e "\e[32m错误: 密码必须包含至少一个数字。\e[0m"
     continue
 fi
-
-if ! echo "$PASSWORD" | grep -q '[~!@#$%^&*()\-=_+\[\]{}|;:",.<>/?]'; then
-    echo -e "\e[32m错误: 密码必须包含至少一个特殊字符 ~!@#$%^&*()\-=_+\[\]{}|;:",.<>/? \e[0m"
-    continue
-fi
     echo -e
     echo -e "\e[32m用户名和密码验证成功\e[0m"
     break
