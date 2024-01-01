@@ -140,7 +140,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
     
         echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
-        az vm create \
+        nohup az vm create \
             --resource-group "$LOCATION-rg" \
             --name "$LOCATION-vm" \
             --location $LOCATION \
