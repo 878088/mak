@@ -132,19 +132,6 @@ done
 
 for LOCATION in "${LOCATIONS[@]}"; do
     (
-        QUOTA=$(az vm list-usage --location $LOCATION --query "[?name.value=='$VM_SIZE' || name.value=='$VM_SIZE_VM'].[limit, currentValue]" -o tsv 2>/dev/null)
-        LIMIT=$(echo $QUOTA | cut -f1)
-        CURRENT=$(echo $QUOTA | cut -f2)
-
-        if (( CURRENT >= LIMIT )); then
-           echo -e "\e[33m跳过 $LOCATION 配额和使用情况不足\e[0m"   
-           SKIP=true
-        else
-           SKIP=false
-        fi
-        if $SKIP; then
-            continue
-        fi    
         az group create --name "$LOCATION-rg" --location $LOCATION
     
         if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
