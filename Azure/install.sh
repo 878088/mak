@@ -107,7 +107,7 @@ if ! echo "$PASSWORD" | grep -q '[0-9]'; then
     continue
 fi
 
-if ! echo "$PASSWORD" | grep -q '[~`!@#$%^&*()-=_+[\]{}|;:",.<>/?]'; then
+if ! echo "$PASSWORD" | grep -q '[~!@#$%^&*()-=_+[\]{}|;:",.<>/?]'; then
     echo -e "\e[32m错误: 密码必须包含至少一个特殊字符。\e[0m"
     continue
 fi
