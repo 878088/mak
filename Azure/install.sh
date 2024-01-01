@@ -189,6 +189,7 @@ resource_group() {
         nohup az group delete --name $rg --yes --no-wait
         echo -e "\e[32m成功删除资源组: $rg\e[0m"
     done
+    menu
 }
 menu() {
     echo -e "${GREEN}原创者：粑屁 Telegram: MJJBPG${NC}"
