@@ -40,7 +40,13 @@ install_azure() {
 login() {
     if command -v az > /dev/null 2>&1; then
         output=$(az login --use-device-code)
+        url=$(echo "$output" | grep -o 'https://[^ ]*')
+        code=$(echo "$output" | grep -o 'code [^ ]*' | sed 's/code //')
+
         if echo "$output" | jq -e . > /dev/null 2>&1; then
+            echo -e "打开以下链接进行登录: ${GREEN}${url}${NC}"
+            echo -e "输入以下授权码: ${GREEN}${code}${NC}"
+            xdg-open $url
             echo -e "${GREEN}登录成功${NC}"
         else
             echo -e "${RED}登录失败，请重试${NC}"
