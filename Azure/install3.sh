@@ -68,6 +68,28 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --security-type Standard \
             --public-ip-sku Basic \
             --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+        
+        # 等待虚拟机创建完成
+        while true; do
+            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv)
+            if [ "$status" = "Succeeded" ]; then
+                echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
+                
+                # 获取虚拟机的公共 IP
+                ip=$(az network public-ip show --name "$LOCATION-vm-ip" --resource-group "$LOCATION-rg" --query "ipAddress" -o tsv)
+
+                # 在虚拟机上执行 SSH 命令
+                sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
+                
+                break
+            elif [[ "$status" = "Failed" || "$status" = "Canceled" || "$status" = "Deleting" ]]; then
+                echo -e "\e[31m$LOCATION-vm 虚拟机创建失败\e[0m"
+                break
+            else
+                echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
+                sleep 10
+            fi
+        done
     ) &
 done
 
@@ -75,8 +97,3 @@ wait
 
 echo -e "\e[32m所有资源已创建完成\e[0m"
 
-ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
-
-for ip in $ips; do
-  sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
-done
