@@ -168,6 +168,8 @@ done
 }
 
 menu() {
+    echo -e "${GREEN}原创者：粑屁 Telegram: MJJBPG${NC}"
+    echo -e
     echo -e "${GREEN}1. 安装 Azure CLI${NC}"
     echo -e "${GREEN}2. 登录 Azure CLI${NC}"
     echo -e "${GREEN}3. 卸载 Azure CLI${NC}"
