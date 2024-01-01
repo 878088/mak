@@ -39,10 +39,8 @@ install_azure() {
 
 login() {
     if command -v az > /dev/null 2>&1; then
-        output=(az login --use-device-code)
-        echo
-        if echo "(azlogin−−use−device−code)
-        if echo"output" | jq -e . > /dev/null 2>&1; then
+        output=$(az login --use-device-code)
+        if echo "$output" | jq -e . > /dev/null 2>&1; then
             echo -e "${GREEN}登录成功${NC}"
         else
             echo -e "${RED}登录失败，请重试${NC}"
@@ -52,6 +50,7 @@ login() {
     fi
     menu
 }
+
 uninstall_azure() {
     if command -v az > /dev/null 2>&1; then
         echo -e "${GREEN}正在卸载 Azure CLI${NC}"
