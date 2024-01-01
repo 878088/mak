@@ -48,38 +48,32 @@ fi
 done
 
 for LOCATION in "${LOCATIONS[@]}"; do
-
-    az group create --name "$LOCATION-rg" --location $LOCATION > "$LOCATION.sh" 2>&1
+    (
+        az group create --name "$LOCATION-rg" --location $LOCATION
     
-    if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
-        VM_SIZE=$VM_SIZE_VM
-    fi
+        if [ "$LOCATION" = "southcentralus" ] || [ "$LOCATION" = "northeurope" ] || [ "$LOCATION" = "southafricanorth" ] || [ "$LOCATION" = "australiasoutheast" ] || [ "$LOCATION" = "southindia" ]; then
+            VM_SIZE=$VM_SIZE_VM
+        fi
     
-    echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
+        echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
-    az vm create \
-        --resource-group "$LOCATION-rg" \
-        --name "$LOCATION-vm" \
-        --location $LOCATION \
-        --image $VM_IMAGE \
-        --size $VM_SIZE \
-        --admin-username "$USERNAME" \
-        --admin-password "$PASSWORD" \
-        --security-type Standard \
-        --public-ip-sku Basic \
-        --public-ip-address-allocation Dynamic >> "$LOCATION.sh" 2>&1
-
-    if [ $? -eq 0 ]; then
-        echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
-    else
-        echo -e "\e[31m$LOCATION-vm 虚拟机创建失败，错误信息如下：\e[0m"
-        cat "$LOCATION.sh"
-    fi
+        az vm create \
+            --resource-group "$LOCATION-rg" \
+            --name "$LOCATION-vm" \
+            --location $LOCATION \
+            --image $VM_IMAGE \
+            --size $VM_SIZE \
+            --admin-username "$USERNAME" \
+            --admin-password "$PASSWORD" \
+            --security-type Standard \
+            --public-ip-sku Basic \
+            --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+    ) &
 done
 
-echo -e "\e[32m所有资源已创建完成\e[0m"
+wait
 
-EOF
+echo -e "\e[32m所有资源已创建完成\e[0m"
 
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 
