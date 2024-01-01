@@ -131,10 +131,13 @@ fi
 done
 
 for LOCATION in "${LOCATIONS[@]}"; do
-    (    
-        ERROR_OUTPUT=$(az provider show --namespace Microsoft.Resources --query "resourceTypes[?resourceType=='resourceGroups'].locations[]" -o tsv 2>&1 | grep -i "$LOCATION")
-        if [ $? -ne 0 ]; then
-           echo -e "\e[31m$LOCATION 订阅不可用于资源组位置。错误信息: $ERROR_OUTPUT 跳过...\e[0m"
+    (
+        QUOTA=$(az vm list-usage --location $LOCATION --query "[?name.value=='$VM_SIZE' || name.value=='$VM_SIZE_VM'].[limit, currentValue]" -o tsv)
+        LIMIT=$(echo $QUOTA | cut -f1)
+        CURRENT=$(echo $QUOTA | cut -f2)
+
+        if (( CURRENT >= LIMIT )); then
+           echo "跳过 $LOCATION 配额和使用情况不足"
            continue
         fi
         az group create --name "$LOCATION-rg" --location $LOCATION
