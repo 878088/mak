@@ -80,7 +80,7 @@ check_azure() {
 }
 
 create_vm() {
-    LOCATIONS=("AustraliaCentral" "australiaeast" "australiasoutheast" "CanadaCentral" "CanadaEast" "CentralIndia" "eastasia" "eastus" "EastUSSTG" "FranceCentral" "GermanyWestCentral" "IsraelCentral" "ItalyNorth" "japanwest" "MalaysiaSouth" "MexicoCentral" "northcentralus" "northeurope" "NorwayEast" "PolandCentral" "SouthAfricaNorth" "SouthCentralUSSTG" "SouthIndia" "SpainCentral" "SwedenCentral" "TaiwanNorth" "TaiwanNorthwest" "UAENorth" "uksouth" "ukwest" "westus" "WestUS3")
+    LOCATIONS=("westus3" "australiacentral" "australiaeast" "australiasoutheast" "canadacentral" "canadaeast" "centralindia" "eastasia" "eastus" "eastusstg" "francecentral" "germanywestcentral" "israelcentral" "italynorth" "japanwest" "malaysiasouth" "mexicocentral" "northcentralus" "northeurope" "norwayeast" "polandcentral" "southafricanorth" "southcentralusstg" "southindia" "spaincentral" "swedencentral" "taiwannorth" "taiwannorthwest" "uaenorth" "uksouth" "ukwest" "westus" "westus3"))
     VM_IMAGE="Debian11"
     VM_SIZE="Standard_DS12_v2"
     
