@@ -83,6 +83,7 @@ create_vm() {
     LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia")
     VM_IMAGE="Debian11"
     VM_SIZE="Standard_DS12_v2"
+    VM_SIZE2="Standard_DS12-2_v2"
     
 while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#() ！或以 $ 或 - 开头\e[0m"
@@ -133,7 +134,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
     (
         az group create --name "$LOCATION-rg" --location $LOCATION
         echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
-    
+
         nohup az vm create \
             --resource-group "$LOCATION-rg" \
             --name "$LOCATION-vm" \
@@ -145,17 +146,44 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --security-type Standard \
             --public-ip-sku Basic \
             --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
-        
+
+        nohup az vm create \
+            --resource-group "$LOCATION-rg" \
+            --name "$LOCATION-vm2" \
+            --location $LOCATION \
+            --image $VM_IMAGE \
+            --size $VM_SIZE2 \
+            --admin-username "$USERNAME" \
+            --admin-password "$PASSWORD" \
+            --security-type Standard \
+            --public-ip-sku Basic \
+            --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+
         while true; do
             status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv 2>/dev/null)
+            status2=$(az vm show --name "$LOCATION-vm2" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv 2>/dev/null)
+
             if [ "$status" = "Succeeded" ]; then
-                echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
-                break
+                echo -e "\e[32m$LOCATION-vm1 虚拟机创建成功\e[0m"
             elif [[ "$status" = "Failed" || "$status" = "Canceled" || "$status" = "Deleting" ]]; then
-                echo -e "\e[31m$LOCATION-vm 虚拟机创建失败\e[0m"
+                echo -e "\e[31m$LOCATION-vm1 虚拟机创建失败\e[0m"
+            else
+                echo -e "\e[34m$LOCATION-vm1 虚拟机创建中...\e[0m"
+            fi
+
+            if [ "$status2" = "Succeeded" ]; then
+                echo -e "\e[32m$LOCATION-vm2 虚拟机创建成功\e[0m"
+            elif [[ "$status2" = "Failed" || "$status2" = "Canceled" || "$status2" = "Deleting" ]]; then
+                echo -e "\e[31m$LOCATION-vm2 虚拟机创建失败\e[0m"
+            else
+                echo -e "\e[34m$LOCATION-vm2 虚拟机创建中...\e[0m"
+            fi
+
+            if [ "$status" = "Succeeded" ] && [ "$status2" = "Succeeded" ]; then
+                break
+            elif [[ "$status" = "Failed" || "$status" = "Canceled" || "$status" = "Deleting" || "$status2" = "Failed" || "$status2" = "Canceled" || "$status2" = "Deleting" ]]; then
                 break
             else
-                echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
                 sleep 10
             fi
         done
