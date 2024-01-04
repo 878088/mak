@@ -149,8 +149,6 @@ for LOCATION in "${LOCATIONS[@]}"; do
 
         if [[ "$LOCATION" =~ ^(canadacentral|canadaeast|centralindia|centraluseuap|eastasia|eastus2euap|japanwest|koreasouth|northcentralus|southindia|ukwest)$ ]]; then
             SIZE=$VM_SIZE2
-        else
-            SIZE=$VM_SIZE
         fi
 
         nohup az vm create \
@@ -158,7 +156,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --name "$LOCATION-vm1" \
             --location $LOCATION \
             --image $VM_IMAGE \
-            --size $SIZE \
+            --size $VM_SIZE2 \
             --admin-username "$USERNAME" \
             --admin-password "$PASSWORD" \
             --security-type Standard \
