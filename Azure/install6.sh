@@ -82,7 +82,7 @@ check_azure() {
 create_vm() {
     LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia")
     VM_IMAGE="Debian11"
-    VM_SIZE="Standard_DS12_v2"
+    VM_SIZE="Standard_DS11"
     
 while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#() ！或以 $ 或 - 开头\e[0m"
@@ -131,11 +131,11 @@ done
 
 for LOCATION in "${LOCATIONS[@]}"; do
     (
-        az group create --name "$LOCATION-rg" --location $LOCATION
+        az group create --name "$LOCATION-rg2" --location $LOCATION
         echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
         nohup az vm create \
-            --resource-group "$LOCATION-rg" \
+            --resource-group "$LOCATION-rg2" \
             --name "$LOCATION-vm" \
             --location $LOCATION \
             --image $VM_IMAGE \
@@ -147,7 +147,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
         
         while true; do
-            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv 2>/dev/null)
+            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg2" --query "provisioningState" -o tsv 2>/dev/null)
             if [ "$status" = "Succeeded" ]; then
                 echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
                 break
