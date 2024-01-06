@@ -81,8 +81,10 @@ check_azure() {
 
 create_vm() {
     LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "uaenorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia")
+    LOCATIONS2=("centralindia" "canadaeast" "canadacentral" "eastasia" "francecentral" "ukwest" "southindia" "northcentralus" "centralus" "uksouth)
     VM_IMAGE="Debian11"
-    VM_SIZE="Standard_DS11"
+    VM_SIZE="Standard_DS12_v2"
+    VM_SIZE2="Standard_DS11"
     
 while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#() ！或以 $ 或 - 开头\e[0m"
@@ -129,13 +131,14 @@ fi
     break
 done
 
-for LOCATION in "${LOCATIONS[@]}"; do
+for LOCATION in "${LOCATIONS[@]}" "${LOCATIONS2[@]}"; do
     (
-        az group create --name "$LOCATION-rg2" --location $LOCATION
+        az group create --name "$LOCATION-rg" --location $LOCATION
+                
         echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
     
         nohup az vm create \
-            --resource-group "$LOCATION-rg2" \
+            --resource-group "$LOCATION-rg" \
             --name "$LOCATION-vm" \
             --location $LOCATION \
             --image $VM_IMAGE \
@@ -146,16 +149,33 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --public-ip-sku Basic \
             --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
         
+        az group create --name "$LOCATION2-rg" --location $LOCATION2
+        echo -e "\e[34m$LOCATIONS2-vm2 虚拟机创建中...\e[0m"
+    
+        nohup az vm create \
+            --resource-group "$LOCATIONS2-rg" \
+            --name "$LOCATIONS2-vm2" \
+            --location $LOCATIONS2 \
+            --image $VM_IMAGE2 \
+            --size $VM_SIZE2 \
+            --admin-username "$USERNAME" \
+            --admin-password "$PASSWORD" \
+            --security-type Standard \
+            --public-ip-sku Basic \
+            --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+        
         while true; do
-            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg2" --query "provisioningState" -o tsv 2>/dev/null)
-            if [ "$status" = "Succeeded" ]; then
-                echo -e "\e[32m$LOCATION-vm 虚拟机创建成功\e[0m"
+            status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv 2>/dev/null)
+            status2=$(az vm show --name "$LOCATION2-vm2" --resource-group "$LOCATION2-rg" --query "provisioningState" -o tsv 2>/dev/null)
+            
+            if [ "$status" = "Succeeded" ] && [ "$status2" = "Succeeded" ]; then
+                echo -e "\e[32m$LOCATION-vm 和 $LOCATION2-vm2 虚拟机创建成功\e[0m"
                 break
-            elif [[ "$status" = "Failed" || "$status" = "Canceled" || "$status" = "Deleting" ]]; then
-                echo -e "\e[31m$LOCATION-vm 虚拟机创建失败\e[0m"
+            elif [[ "$status" = "Failed" || "$status" = "Canceled" || "$status" = "Deleting" || "$status2" = "Failed" || "$status2" = "Canceled" || "$status2" = "Deleting" ]]; then
+                echo -e "\e[31m$LOCATION-vm 或 $LOCATION2-vm2 虚拟机创建失败\e[0m"
                 break
             else
-                echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
+                echo -e "\e[34m$LOCATION-vm 和 $LOCATION2-vm2 虚拟机创建中...\e[0m"
                 sleep 10
             fi
         done
