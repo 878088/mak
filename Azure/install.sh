@@ -145,6 +145,8 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --security-type Standard \
             --public-ip-sku Basic \
             --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+            
+            sleep 3s
         
         while true; do
             status=$(az vm show --name "$LOCATION-vm" --resource-group "$LOCATION-rg" --query "provisioningState" -o tsv 2>/dev/null)
