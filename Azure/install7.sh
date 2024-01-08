@@ -68,6 +68,7 @@ for pid in "${pids[@]}"; do
         echo -e "\e[31mVM创建失败$location\e[0m"
     fi
 done
+sleep 10
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 for ip in $ips; do
   {
