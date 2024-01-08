@@ -131,9 +131,8 @@ done
 
 for LOCATION in "${LOCATIONS[@]}"; do
     (
-        az group create --name "$LOCATION-rg" --location $LOCATION
-        echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m"
-    
+        az group create --name "$LOCATION-rg" --location $LOCATION && \
+        echo -e "\e[34m$LOCATION-vm 虚拟机创建中...\e[0m" && \
         nohup az vm create \
             --resource-group "$LOCATION-rg" \
             --name "$LOCATION-vm" \
@@ -144,7 +143,7 @@ for LOCATION in "${LOCATIONS[@]}"; do
             --admin-password "$PASSWORD" \
             --security-type Standard \
             --public-ip-sku Basic \
-            --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+            --public-ip-address-allocation Dynamic > /dev/null 2>&1 & \
             
         sleep 3s
         
