@@ -2,7 +2,7 @@
 LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia" "uaenorth")
 while true; do
     for location in "${LOCATIONS[@]}"; do
-        az group create --name "$location" --location "$location" --no-wait
+        az group create --name "$location" --location "$location"
         if [ $? -eq 0 ]; then
             echo "资源组创建成功 $location"
         else
