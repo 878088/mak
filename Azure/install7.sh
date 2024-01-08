@@ -11,7 +11,14 @@ for location in "${LOCATIONS[@]}"; do
         az group create --name "$location" --location "$location"
         if [ $? -eq 0 ]; then
             echo -e "\e[32m资源组创建成功 $location\e[0m"
-            nohup az vm create --resource-group "$location" --name southindia --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username ooo --admin-password KKKKjjjj520. --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+            nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username ooo --admin-password JINguang520. --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+            pid=$!
+            wait $pid
+            if [ $? -eq 0 ]; then
+                echo -e "\e[32mVM 创建成功\e[0m"
+            else
+                echo -e "\e[31mVM 创建失败\e[0m"
+            fi
             echo -e "\e[36m已在后台执行 az vm create 命令\e[0m"
         else
             echo -e "\e[31m资源组创建失败 $location\e[0m"
