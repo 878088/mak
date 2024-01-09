@@ -133,12 +133,13 @@ for location in "${LOCATIONS[@]}"; do
             pid=$!
             pids+=($pid)
             echo -e "\e[36m已在后台执行第一个 az vm create 命令\e[0m"
-            if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
+        if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
             nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
             pid=$!
             pids+=($pid)
             echo -e "\e[36m已在后台执行第二个 az vm create 命令\e[0m"
-        else
+        fi
+            else
             echo -e "\e[31m资源组创建失败 $location\e[0m"
             echo -e "\e[31m$errorMessage\e[0m"
         fi
