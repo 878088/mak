@@ -160,12 +160,20 @@ ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 ip_index=0
 for ip in $ips; do
   {
-    nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
-    exit_status=$?
-    if [ $exit_status -eq 0 ]; then
-        echo -e "\e[32m第 $((ip_index+1)) 个挖矿任务 ($ip) 成功启动\e[0m"
-    else
-        echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 启动失败\e[0m"
+    success=false
+    for attempt in {1..3}; do
+        nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
+        exit_status=$?
+        if [ $exit_status -eq 0 ]; then
+            echo -e "\e[32m第 $((ip_index+1)) 个挖矿任务 ($ip) 成功启动\e[0m"
+            success=true
+            break
+        else
+            echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 启动失败，正在进行第 $attempt 次重试\e[0m"
+        fi
+    done
+    if ! $success; then
+        echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 在多次尝试后仍启动失败\e[0m"
     fi
     ((ip_index++))
   } &
@@ -174,7 +182,6 @@ done
 wait
 
 menu
-
 }
 
 resource_group() {
