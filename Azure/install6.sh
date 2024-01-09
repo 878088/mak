@@ -81,7 +81,7 @@ check_azure() {
 
 create_vm() {
     LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia" "uaenorth")
-
+    LOCATIONS2=("canadacentral" "canadaeast" "centralindia" "centralus" "eastasia" "japanwest" "northcentralus" "southindia" "uksouth" "ukwest")
 while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#() ！或以 $ 或 - 开头\e[0m"
     echo -e "\e[32m密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
@@ -133,6 +133,7 @@ for location in "${LOCATIONS[@]}"; do
             pid=$!
             pids+=($pid)
             echo -e "\e[36m已在后台执行第一个 az vm create 命令\e[0m"
+            if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
             nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
             pid=$!
             pids+=($pid)
