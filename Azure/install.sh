@@ -155,7 +155,6 @@ for ip in $ips; do
     nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"' && echo -e "\e[32m$ip 成功链接 SSH 执行挖矿成功\e[0m"
   } &
 done
-
 menu
 }
 resource_group() {
