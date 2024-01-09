@@ -162,7 +162,7 @@ for ip in $ips; do
   {
     success=false
     for attempt in {1..3}; do
-        nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
+        nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"' > /dev/null 2>&1 &
         exit_status=$?
         if [ $exit_status -eq 0 ]; then
             echo -e "\e[32m第 $((ip_index+1)) 个挖矿任务 ($ip) 成功启动\e[0m"
