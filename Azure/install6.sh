@@ -80,8 +80,6 @@ check_azure() {
 }
 
 create_vm() {
-    #!/bin/bash
-
 LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia" "uaenorth")
 
 while true; do
@@ -154,10 +152,20 @@ done
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
 for ip in $ips; do
   {
-    nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"' && echo -e "\e[32m$ip 成功链接 SSH 执行挖矿成功\e[0m"
+    nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
+    exit_status=$?
+    if [ $exit_status -eq 0 ]; then
+        echo -e "\e[32m$ip 的挖矿任务成功启动\e[0m"
+    else
+        echo -e "\e[31m$ip 的挖矿任务启动失败\e[0m"
+    fi
   } &
-    done
-    menu
+done
+
+wait
+
+menu
+
 }
 
 resource_group() {
