@@ -149,22 +149,24 @@ for index in "${!pids[@]}"; do
     location=${LOCATIONS[$index]}
     wait $pid
     if [ $? -eq 0 ]; then
-        echo -e "\e[32mVM创建成功 $location\e[0m"
+        echo -e "\e[32mVM创建成功 $location (第 $((index+1)) 个)\e[0m"
     else
-        echo -e "\e[31mVM创建失败 $location\e[0m"
+        echo -e "\e[31mVM创建失败 $location (第 $((index+1)) 个)\e[0m"
     fi
 done
 sleep 30
 ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
+ip_index=0
 for ip in $ips; do
   {
     nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"'
     exit_status=$?
     if [ $exit_status -eq 0 ]; then
-        echo -e "\e[32m$ip 的挖矿任务成功启动\e[0m"
+        echo -e "\e[32m第 $((ip_index+1)) 个挖矿任务 ($ip) 成功启动\e[0m"
     else
-        echo -e "\e[31m$ip 的挖矿任务启动失败\e[0m"
+        echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 启动失败\e[0m"
     fi
+    ((ip_index++))
   } &
 done
 
