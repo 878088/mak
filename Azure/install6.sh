@@ -151,18 +151,20 @@ fi
         fi
     done
 
-    for pid in "${!pid_location_map[@]}"; do
-        if kill -0 $pid >/dev/null 2>&1; then
-            wait $pid
-            exit_status=$?
-            location=${pid_location_map[$pid]}
-            if [ $exit_status -eq 0 ]; then
-                echo -e "\e[32mVM创建成功 $location\e[0m"
-            else
-                echo -e "\e[31mVM创建失败 $location\e[0m"
-            fi
+for pid in "${!pid_location_map[@]}"; do
+    wait $pid
+    location=${pid_location_map[$pid]}
+    vm_info=$(az vm show --name "$location" --resource-group "$location" --query 'provisioningState' --output tsv 2>&1)
+    if [ $? -eq 0 ]; then
+        if [ "$vm_info" == "Succeeded" ]; then
+            echo -e "\e[32mVM创建成功 $location\e[0m"
+        else
+            echo -e "\e[31mVM创建失败 $location\e[0m"
         fi
-    done
+    else
+        echo -e "\e[31m无法获取 VM 信息 $location\e[0m"
+    fi
+done
 
     sleep 30
     ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
