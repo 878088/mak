@@ -133,38 +133,20 @@ fi
 
             if [ $? -eq 0 ]; then
                 echo -e "\e[32m资源组创建成功 $location\e[0m"
-                nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
-                pid=$!
-                pid_location_map[$pid]=$location
+                nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1
                 echo -e "\e[36m已在后台执行第一个 az vm create 命令\e[0m"
 
-                if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
-                    nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
-                    pid=$!
-                    pid_location_map[$pid]="${location}-2"
-                    echo -e "\e[36m已在后台执行第二个 az vm create 命令\e[0m"
-                fi
+            if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
+                wait
+                nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+    echo -e "\e[36m已在后台执行第二个 az vm create 命令\e[0m"
+            fi
             else
                 echo -e "\e[31m资源组创建失败 $location\e[0m"
                 echo -e "\e[31m$errorMessage\e[0m"
             fi
         fi
     done
-
-for pid in "${!pid_location_map[@]}"; do
-    wait $pid
-    location=${pid_location_map[$pid]}
-    vm_info=$(az vm show --name "$location" --resource-group "$location" --query 'provisioningState' --output tsv 2>&1)
-    if [ $? -eq 0 ]; then
-        if [ "$vm_info" == "Succeeded" ]; then
-            echo -e "\e[32mVM创建成功 $location\e[0m"
-        else
-            echo -e "\e[31mVM创建失败 $location\e[0m"
-        fi
-    else
-        echo -e "\e[31m无法获取 VM 信息 $location\e[0m"
-    fi
-done
 
     sleep 30
     ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
