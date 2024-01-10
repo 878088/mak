@@ -82,7 +82,8 @@ check_azure() {
 create_vm() {
     LOCATIONS=("westus3" "australiaeast" "uksouth" "southeastasia" "swedencentral" "centralus" "centralindia" "eastasia" "japaneast" "koreacentral" "canadacentral" "francecentral" "germanywestcentral" "italynorth" "norwayeast" "polandcentral" "switzerlandnorth" "brazilsouth" "northcentralus" "westus" "japanwest" "australiacentral" "canadaeast" "ukwest" "southcentralus" "northeurope" "southafricanorth" "australiasoutheast" "southindia" "uaenorth")
     LOCATIONS2=("canadacentral" "canadaeast" "centralindia" "centralus" "eastasia" "japanwest" "northcentralus" "southindia" "uksouth" "ukwest")
-while true; do
+
+    while true; do
     echo -e "\e[32m用户名不能包含大写字符 A-Z、特殊字符 \\/\"[]:|<>+=;,?*@#() ！或以 $ 或 - 开头\e[0m"
     echo -e "\e[32m密码长度必须在 12 到 72 之间。密码必须包含以下 3 个字符：1 个小写字符、1 个大写字符、1 个数字和 1 个特殊字符\e[0m"
     echo -e "\e[32m实例密码的特殊字符适配使用 .!@#\$%^\&*() \e[0m"
@@ -117,71 +118,79 @@ if ! echo "$PASSWORD" | grep -q '[.!@#\$%^\&*()]'; then
 fi
     echo -e
     echo -e "\e[32m用户名和密码验证成功\e[0m"
-    break
-done
-declare -a pids
-for location in "${LOCATIONS[@]}"; do
-    groupInfo=$(az group show --name "$location" 2>&1)
-    if [ $? -eq 0 ]; then
-        echo -e "\e[33m资源组已存在 $location\e[0m"
-    else
-        errorMessage=$(echo "$groupInfo" | grep -oP "(?<=Message:\s).+")
-        az group create --name "$location" --location "$location"
+        break
+    done
+
+    declare -A pid_location_map
+    for location in "${LOCATIONS[@]}"; do
+        groupInfo=$(az group show --name "$location" 2>&1)
+
         if [ $? -eq 0 ]; then
-            echo -e "\e[32m资源组创建成功 $location\e[0m"
-            nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
-            pid=$!
-            pids+=($pid)
-            echo -e "\e[36m已在后台执行第一个 az vm create 命令\e[0m"
-        if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
-            nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
-            pid=$!
-            pids+=($pid)
-            echo -e "\e[36m已在后台执行第二个 az vm create 命令\e[0m"
-        fi
-            else
-            echo -e "\e[31m资源组创建失败 $location\e[0m"
-            echo -e "\e[31m$errorMessage\e[0m"
-        fi
-    fi
-done
-for index in "${!pids[@]}"; do
-    pid=${pids[$index]}
-    location=${LOCATIONS[$index]}
-    wait $pid
-    if [ $? -eq 0 ]; then
-        echo -e "\e[32mVM创建成功 $location (第 $((index+1)) 个)\e[0m"
-    else
-        echo -e "\e[31mVM创建失败 $location (第 $((index+1)) 个)\e[0m"
-    fi
-done
-sleep 30
-ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
-ip_index=0
-for ip in $ips; do
-  {
-    success=false
-    for attempt in {1..3}; do
-        nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"' > /dev/null 2>&1 &
-        exit_status=$?
-        if [ $exit_status -eq 0 ]; then
-            echo -e "\e[32m第 $((ip_index+1)) 个挖矿任务 ($ip) 成功启动\e[0m"
-            success=true
-            break
+            echo -e "\e[33m资源组已存在 $location\e[0m"
         else
-            echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 启动失败，正在进行第 $attempt 次重试\e[0m"
+            errorMessage=$(echo "$groupInfo" | grep -oP "(?<=Message:\s).+")
+            az group create --name "$location" --location "$location"
+
+            if [ $? -eq 0 ]; then
+                echo -e "\e[32m资源组创建成功 $location\e[0m"
+                nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+                pid=$!
+                pid_location_map[$pid]=$location
+                echo -e "\e[36m已在后台执行第一个 az vm create 命令\e[0m"
+
+                if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
+                    nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+                    pid=$!
+                    pid_location_map[$pid]="${location}-2"
+                    echo -e "\e[36m已在后台执行第二个 az vm create 命令\e[0m"
+                fi
+            else
+                echo -e "\e[31m资源组创建失败 $location\e[0m"
+                echo -e "\e[31m$errorMessage\e[0m"
+            fi
         fi
     done
-    if ! $success; then
-        echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 在多次尝试后仍启动失败\e[0m"
-    fi
-    ((ip_index++))
-  } &
-done
 
-wait
+    for pid in "${!pid_location_map[@]}"; do
+        if kill -0 $pid >/dev/null 2>&1; then
+            wait $pid
+            exit_status=$?
+            location=${pid_location_map[$pid]}
+            if [ $exit_status -eq 0 ]; then
+                echo -e "\e[32mVM创建成功 $location\e[0m"
+            else
+                echo -e "\e[31mVM创建失败 $location\e[0m"
+            fi
+        fi
+    done
 
-menu
+    sleep 30
+    ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
+    ip_index=0
+    for ip in $ips; do
+        {
+            success=false
+            for attempt in {1..3}; do
+                nohup sshpass -p "$PASSWORD" ssh -tt -o StrictHostKeyChecking=no $USERNAME@$ip 'sudo bash -c "curl -s -L https://raw.githubusercontent.com/878088/zeph/main/setup_zeph_miner.sh | LC_ALL=en_US.UTF-8 bash -s '$WALLERT'"' > /dev/null 2>&1 &
+                exit_status=$?
+                if [ $exit_status -eq 0 ]; then
+                    echo -e "\e[32m第 $((ip_index+1)) 个挖矿任务 ($ip) 成功启动\e[0m"
+                    success=true
+                    break
+                else
+                    echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 启动失败，正在进行第 $attempt 次重试\e[0m"
+                fi
+            done
+            if ! $success; then
+                echo -e "\e[31m第 $((ip_index+1)) 个挖矿任务 ($ip) 在多次尝试后仍启动失败\e[0m"
+            fi
+            ((ip_index++))
+        } &
+    done
+
+    wait
+
+    menu
 }
 
 resource_group() {
