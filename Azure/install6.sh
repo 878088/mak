@@ -151,7 +151,7 @@ fi
         fi
     done
 
-    sleep 30
+    sleep 40
     ips=$(az network public-ip list --query "[].ipAddress" -o tsv)
     ip_index=0
     for ip in $ips; do
@@ -174,6 +174,7 @@ fi
             ((ip_index++))
         } &
     done
+    wait
     menu
 }
 
