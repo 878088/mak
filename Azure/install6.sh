@@ -133,13 +133,13 @@ fi
 
             if [ $? -eq 0 ]; then
                 echo -e "\e[32m资源组创建成功 $location\e[0m"
-                nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+                nohup az vm create --resource-group "$location" --name "$location" --location "$location" --image Debian11 --size Standard_DS12_v2 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic >> azure.txt 2>&1 &
                 pid=$!
                 pid_location_map[$pid]=$location
                 echo -e "\e[36m已在后台执行第一个 az vm create 命令\e[0m"
 
                 if [[ " ${LOCATIONS2[@]} " =~ " ${location} " ]]; then
-                    nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic > /dev/null 2>&1 &
+                    nohup az vm create --resource-group "$location" --name "$location-2" --location "$location" --image Debian11 --size Standard_DS11 --admin-username "$USERNAME" --admin-password "$PASSWORD" --security-type Standard --public-ip-sku Basic --public-ip-address-allocation Dynamic >> azure.txt 2>&1 &
                     pid=$!
                     pid_location_map[$pid]="${location}-2"
                     echo -e "\e[36m已在后台执行第二个 az vm create 命令\e[0m"
@@ -174,9 +174,6 @@ fi
             ((ip_index++))
         } &
     done
-
-    wait
-
     menu
 }
 
