@@ -1,20 +1,18 @@
 #!/bin/bash
 
-ipv6Address=$(ip addr show | grep inet6 | grep -v fe80 | awk '{print $2}' | head -n 1)
+ipv6Address=$(ip addr show | grep inet6 | grep -v fe80 | awk '{print $2}' | head -n 1 | cut -d"/" -f1)
 prefixLength=64
 
 echo "Your IPv6 address is: $ipv6Address"
 echo "Enter the number of IPv6 addresses to generate:"
-read ipv6Count
+read -r ipv6Count
 
 while ! [[ $ipv6Count =~ ^[0-9]+$ ]]; do
     echo "Please enter a valid number"
-    read ipv6Count
+    read -r ipv6Count
 done
 
 interfaceName="eth"
-
-generateIPv6Addresses "$ipv6Address" $prefixLength $ipv6Count $interfaceName
 
 getRandomBinarySegment() {
     # Function to generate a random binary segment
@@ -59,3 +57,5 @@ convertBinaryToIPv6() {
 generateIPv6Addresses() {
     # Function to generate IPv6 addresses
 }
+
+generateIPv6Addresses "$ipv6Address" $prefixLength $ipv6Count $interfaceName
