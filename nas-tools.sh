@@ -639,7 +639,7 @@ WantedBy = multi-user.target" > /lib/systemd/system/rclone-${list[rclone_config_
                 if [[ "${release}" = "centos" ]];then
                         yum update && yum install fuse3 -y
                 elif [[ "${release}" = "debian" || "${release}" = "ubuntu" ]];then
-                        apt update -y && apt-get install fuse3
+                        apt update -y && apt-get install fuse3 -y
                 fi
                 echo
                 echo -e "`curr_date` fuse安装完成."
