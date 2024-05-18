@@ -1,4 +1,3 @@
-#bash
 Green="\033[32m"
 Font="\033[0m"
 Red="\033[31m"
@@ -47,6 +46,11 @@ add_swap(){
     else
         echo -e "${Red}swapfile已存在。请先删除现有的swapfile，再创建新的。${Font}"
     fi
+
+    # 设置 vm.swappiness 参数
+    sysctl vm.swappiness=100
+    echo 'vm.swappiness=100' >> /etc/sysctl.conf
+    echo -e "${Green}已设置vm.swappiness为100，系统将优先使用swap。${Font}"
 }
 
 # 删除swap函数
@@ -61,6 +65,11 @@ del_swap(){
     else
         echo -e "${Red}未发现swapfile。没有可以删除的swap。${Font}"
     fi
+
+    # 恢复默认的 vm.swappiness 参数
+    sysctl vm.swappiness=60
+    sed -i '/vm.swappiness=100/d' /etc/sysctl.conf
+    echo -e "${Green}已恢复默认的vm.swappiness值60。${Font}"
 }
 
 # 显示当前内存和swap使用情况
