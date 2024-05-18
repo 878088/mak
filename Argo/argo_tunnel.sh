@@ -15,7 +15,7 @@ fi
 
 if ps -Af | grep "cloudflared tunnel" | grep -v grep >/dev/null; then
     status="状态：已登录"
-elif sudo -u root bash -c 'command -v cloudflared >/dev/null && [[ -f /root/.cloudflared/cert.pem ]]'; then
+elif -u root bash -c 'command -v cloudflared >/dev/null && [[ -f /root/.cloudflared/cert.pem ]]'; then
     status="状态：已安装、已登录"
 elif command -v cloudflared >/dev/null; then
     status="状态：已安装"
@@ -27,11 +27,11 @@ if ! dpkg -s cgroup-tools >/dev/null 2>&1; then
     if [[ -f /etc/os-release ]]; then
         id_like=$(grep ID_LIKE /etc/os-release | cut -d= -f2-)
         if [[ $id_like == *"debian"* ]]; then
-            sudo apt-get update > /dev/null
-            sudo apt-get install -y cgroup-tools > /dev/null
+            apt-get update > /dev/null
+            apt-get install -y cgroup-tools > /dev/null
         elif [[ $id_like == *"rhel fedora"* ]]; then
-            sudo yum install -y epel-release > /dev/null
-            sudo yum install -y cgroup-tools > /dev/null
+            yum install -y epel-release > /dev/null
+            yum install -y cgroup-tools > /dev/null
         else
             echo -e "${red}警告：${plain} 不支持当前系统的Linux发行版，跳过安装cgroup-tools \n"
         fi
@@ -42,20 +42,20 @@ fi
 
 BUFFERSIZE=250000000
 
-CURRENTSIZE=$(sudo sysctl net.core.rmem_default | awk '{print $NF}')
+CURRENTSIZE=$(sysctl net.core.rmem_default | awk '{print $NF}')
 
 if [ "$CURRENTSIZE" -lt 250000000 ]; then
-    sudo sysctl -w net.core.rmem_default=$BUFFERSIZE
-    sudo sysctl -w net.core.rmem_max=$BUFFERSIZE
-    sudo sysctl -w net.core.wmem_default=$BUFFERSIZE
-    sudo sysctl -w net.core.wmem_max=$BUFFERSIZE
+    sysctl -w net.core.rmem_default=$BUFFERSIZE
+    sysctl -w net.core.rmem_max=$BUFFERSIZE
+    sysctl -w net.core.wmem_default=$BUFFERSIZE
+    sysctl -w net.core.wmem_max=$BUFFERSIZE
 
-    echo "net.core.rmem_default=$BUFFERSIZE" | sudo tee -a /etc/sysctl.conf > /dev/null
-    echo "net.core.rmem_max=$BUFFERSIZE" | sudo tee -a /etc/sysctl.conf > /dev/null
-    echo "net.core.wmem_default=$BUFFERSIZE" | sudo tee -a /etc/sysctl.conf > /dev/null
-    echo "net.core.wmem_max=$BUFFERSIZE" | sudo tee -a /etc/sysctl.conf > /dev/null
+    echo "net.core.rmem_default=$BUFFERSIZE" | tee -a /etc/sysctl.conf > /dev/null
+    echo "net.core.rmem_max=$BUFFERSIZE" | tee -a /etc/sysctl.conf > /dev/null
+    echo "net.core.wmem_default=$BUFFERSIZE" | tee -a /etc/sysctl.conf > /dev/null
+    echo "net.core.wmem_max=$BUFFERSIZE" | tee -a /etc/sysctl.conf > /dev/null
 
-    sudo sysctl -p
+    sysctl -p
 fi
 
 install_cloudflared() {
@@ -71,19 +71,19 @@ install_cloudflared() {
   else
     echo -e "${yellow}未安装Cloudflared隧道，正在下载最新版本...${reset}"
     wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$arch -O /usr/local/bin/cloudflared
-    sudo chmod +x /usr/local/bin/cloudflared
-    sudo id -u cloudflared &>/dev/null || sudo useradd --system --user-group --shell /usr/sbin/nologin cloudflared
+    chmod +x /usr/local/bin/cloudflared
+    id -u cloudflared &>/dev/null || useradd --system --user-group --shell /usr/sbin/nologin cloudflared
     echo -e "${green}已将Cloudflared隧道安装到/usr/local/bin/目录下${reset}"
   fi
   if [[ ! -f /etc/default/cloudflared ]]; then
     echo -e "${red}警告：未检测到/etc/default/cloudflared文件${reset}"
-    echo "CLOUDFLARED_OPTS=--port 5053 --upstream https://1.1.1.1/dns-query --upstream https://1.0.0.1/dns-query" | sudo tee /etc/default/cloudflared >/dev/null
+    echo "CLOUDFLARED_OPTS=--port 5053 --upstream https://1.1.1.1/dns-query --upstream https://1.0.0.1/dns-query" | tee /etc/default/cloudflared >/dev/null
     echo -e "${green}已创建并写入/etc/default/cloudflared文件${reset}"
   else
     echo -e "${green}已检测到/etc/default/cloudflared文件${reset}"
   fi
-  sudo chown cloudflared:cloudflared /usr/local/bin/cloudflared
-  sudo chown cloudflared:cloudflared /etc/default/cloudflared  
+  chown cloudflared:cloudflared /usr/local/bin/cloudflared
+  chown cloudflared:cloudflared /etc/default/cloudflared  
   
   cloudflared_service
   echo -e "${yellow}请登录Cloudflare隧道...${reset}"
@@ -116,10 +116,10 @@ EOF
     echo -e "${yellow}/etc/systemd/system/cloudflared.service已存在${reset}"
   fi
   
-  sudo systemctl start cloudflared.service
+  systemctl start cloudflared.service
   echo -e "${green}已启动cloudflared.service${reset}"
 
-  sudo systemctl enable cloudflared.service
+  systemctl enable cloudflared.service
   echo -e "${green}已设置cloudflared.service为开机自启动${reset}"
 }
 
@@ -203,13 +203,13 @@ uninstall_cloudflared() {
     return 1
   fi
 
-  sudo systemctl stop cloudflared-${name}.service
-  sudo systemctl disable cloudflared-${name}.service
+  systemctl stop cloudflared-${name}.service
+  systemctl disable cloudflared-${name}.service
 
   service_file="/etc/systemd/system/cloudflared-${name}.service"
   if [[ -f ${service_file} ]]; then
-    sudo rm -f ${service_file}
-    sudo systemctl daemon-reload
+    rm -f ${service_file}
+    systemctl daemon-reload
     echo -e "${green}已删除隧道 ${name} 的 systemd 服务文件${reset}"
   fi
 
@@ -225,7 +225,7 @@ uninstall_cloudflared() {
   
   yml_file="/root/${name}.yml"
   if [[ -f ${yml_file} ]]; then
-    sudo rm -f ${yml_file}
+    rm -f ${yml_file}
     echo -e "${green}已删除隧道 ${name} 的 yml 文件${reset}"
   fi
 }
