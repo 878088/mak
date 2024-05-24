@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ "$(id -u)" -ne 0 ]; then
+    echo "请使用root用户运行"
+    exit 1
+fi
 
 workdir="/root/name.com"
 
