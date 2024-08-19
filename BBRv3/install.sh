@@ -90,6 +90,7 @@ if [ -f /etc/sysctl.conf ]; then
     echo "vm.min_free_kbytes = 65536" >> "$sysctl"
     echo "vm.swappiness = 10" >> "$sysctl"
     echo "vm.vfs_cache_pressure = 50" >> "$sysctl"
+    echo "net.ipv4.ping_group_range = 0 2147483647" >> "$sysctl"
     sysctl -p
     echo -e "\033[32m\n已添加Linux参数\033[0m"
 fi
